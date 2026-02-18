@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vision | Surgical Intelligence Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c6a65d",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#111111",
+                        "matte-charcoal": "#1a1a1a",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .gold-glow {
+            box-shadow: 0 0 20px rgba(198, 166, 93, 0.15);
+        }
+        .logo-underline {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #c6a65d, transparent);
+            width: 80%;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display flex items-center justify-center min-h-screen overflow-hidden">
+<!-- Background Decoration -->
+<div class="fixed inset-0 pointer-events-none overflow-hidden">
+<div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
+</div>
+<!-- Login Container -->
+<div class="relative z-10 w-full max-w-[420px] px-6">
+<!-- Brand Header -->
+<div class="text-center mb-12">
+<h1 class="font-serif text-5xl text-white tracking-widest mb-2 italic">Vision</h1>
+<div class="logo-underline"></div>
+<p class="mt-4 text-primary/60 text-[10px] uppercase tracking-[0.3em] font-medium">Surgical Intelligence Portal</p>
+</div>
+<!-- Login Card -->
+<div class="bg-matte-charcoal/80 backdrop-blur-md border border-primary/20 rounded-xl p-8 gold-glow">
+<div class="mb-8">
+<h2 class="text-white text-lg font-light tracking-tight">Private Access</h2>
+<p class="text-white/40 text-xs mt-1">Authorized Medical Personnel Only</p>
+</div>
+<form class="space-y-6">
+<!-- Email Field -->
+<div class="space-y-2">
+<label class="block text-[11px] uppercase tracking-widest text-primary/80 font-semibold ml-1" for="email">Email Identifier</label>
+<div class="relative">
+<input class="w-full bg-[#0a0a0a] border border-white/10 rounded-lg py-4 px-4 text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-white/10" id="email" placeholder="name@surgical.vision" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex justify-between items-center px-1">
+<label class="block text-[11px] uppercase tracking-widest text-primary/80 font-semibold" for="password">Security Key</label>
+<a class="text-[10px] text-white/30 hover:text-primary transition-colors uppercase tracking-tighter" href="#">Forgot?</a>
+</div>
+<div class="relative flex items-center">
+<input class="w-full bg-[#0a0a0a] border border-white/10 rounded-lg py-4 px-4 pr-12 text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary/50 focus:border-primary/50 transition-all placeholder:text-white/10" id="password" placeholder="••••••••••••" type="password"/>
+<button class="absolute right-4 text-white/20 hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">visibility</span>
+</button>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold text-xs uppercase tracking-[0.2em] py-5 rounded-lg transition-all transform active:scale-[0.98] shadow-lg shadow-primary/10 mt-4" type="submit">
+                    Enter Vision
+                </button>
+</form>
+<div class="mt-8 pt-6 border-t border-white/5 text-center">
+<p class="text-white/30 text-[11px]">New to the platform?</p>
+<button class="mt-2 text-primary/80 hover:text-primary text-xs font-medium uppercase tracking-widest transition-colors">
+                    Request Credentials
+                </button>
+</div>
+</div>
+<!-- Footer Info -->
+<div class="mt-12 flex justify-between items-center px-2">
+<div class="flex gap-4">
+<a class="text-[9px] text-white/20 hover:text-white/40 uppercase tracking-widest transition-colors" href="#">Privacy</a>
+<a class="text-[9px] text-white/20 hover:text-white/40 uppercase tracking-widest transition-colors" href="#">Security</a>
+</div>
+<p class="text-[9px] text-white/10 uppercase tracking-[0.2em]">© 2024 Vision Surgical Systems</p>
+</div>
+</div>
+<!-- Interface Accents -->
+<div class="fixed top-8 left-8 hidden lg:block">
+<div class="flex items-center gap-2">
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+<span class="text-[10px] text-white/20 uppercase tracking-[0.3em]">System Secure</span>
+</div>
+</div>
+<div class="fixed bottom-8 right-8 hidden lg:block">
+<div class="text-right">
+<p class="text-[10px] text-white/20 uppercase tracking-[0.3em] mb-1">Node Status</p>
+<div class="flex gap-1 justify-end">
+<div class="w-4 h-[2px] bg-primary/40"></div>
+<div class="w-4 h-[2px] bg-primary/40"></div>
+<div class="w-4 h-[2px] bg-primary"></div>
+</div>
+</div>
+</div>
+</body></html>

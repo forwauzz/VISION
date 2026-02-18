@@ -1,0 +1,17 @@
+---
+description: Frontend UI must be derived from Stitch design files. Ensures we use the Stitch UI for the Vision frontend.
+globs: src/**/*.{jsx,tsx,js,ts,css}
+---
+
+# Stitch UI as source of truth
+
+- **All Vision frontend UI must be derived from the Stitch design files** in `stitch-extracted/stitch/`.
+- Each screen has a folder with `code.html` (structure and Tailwind classes) and `screen.png` (reference).
+- When building or changing a screen:
+  1. Use the corresponding Stitch `code.html` as the layout and class reference.
+  2. Convert markup to React components while preserving structure, class names, and design tokens.
+  3. Do not invent new layouts or styles; extend from Stitch or the shared design system (which itself comes from Stitch).
+- Design tokens (primary, background-dark, surface-dark, fonts, gold-glow, etc.) are defined in `tailwind.config.js` and must match the Stitch `code.html` theme.
+- Screens: `vision_landing_page`, `login_screen_(desktop)_-_v1`, `establishment_selector_(desktop)_-_v1`, `dashboard_(desktop)_-_v1`, `session_screen_(desktop)`, `transcript_review_&_merge_(desktop)`.
+
+**UI quality:** (1) Material Symbols must render as icons, not as visible ligature names (e.g. "play_arrow"). Use the font link with `opsz,wght,FILL,GRAD` and the `.material-symbols-outlined` base styles. (2) Decorative icon-only spans: use `aria-hidden` and `select-none`; buttons with icon+text: use `aria-label` for the action. (3) Avoid overlapping text/buttons: use `min-w-0` and `truncate` where flex content can overflow; prefer grid or flex without absolute centering in footers so three regions don’t overlap on small viewports.

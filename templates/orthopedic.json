@@ -1,0 +1,25 @@
+{
+  "examType": "Orthopedic",
+  "headings": [
+    "Inspection",
+    "Palpation",
+    "Active Range of Motion",
+    "Passive Range of Motion",
+    "Strength",
+    "Special Tests",
+    "Neurovascular",
+    "Swelling/Effusion",
+    "Skin/Scarring"
+  ],
+  "placeholders": {
+    "Inspection": "Visual inspection: posture, alignment, deformity, skin, surgical sites, atrophy, swelling.",
+    "Palpation": "Palpation: tenderness, warmth, crepitus, masses. Not visually assessable if not documented.",
+    "Active Range of Motion": "Active ROM: document planes and degrees or comparison to contralateral.",
+    "Passive Range of Motion": "Passive ROM: end feel, blocks, pain at limit.",
+    "Strength": "Motor strength: grade 0–5 or comparison. Not visually assessable if not demonstrated.",
+    "Special Tests": "Special tests: e.g. impingement, instability, provocative maneuvers. Document positive/negative.",
+    "Neurovascular": "Neurovascular: sensation, pulses, capillary refill. Not visually assessable if not demonstrated.",
+    "Swelling/Effusion": "Swelling or effusion. Not visually assessable if not applicable.",
+    "Skin/Scarring": "Skin condition, scars, healing. Not visually assessable if not applicable."
+  }
+}

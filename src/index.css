@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: theme('fontFamily.display');
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Material Symbols: ensure icons render (not ligature names like "play_arrow") */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1em;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  display: inline-block;
+}
+
+.gold-glow:hover {
+  box-shadow: 0 0 20px rgba(198, 166, 93, 0.15);
+  border-color: rgba(198, 166, 93, 0.4);
+}
+
+/* Stitch UI — from stitch-extracted/stitch/vision_landing_page/code.html */
+.glass-nav {
+  background: rgba(17, 17, 17, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(198, 166, 93, 0.15);
+}
+.hero-gradient {
+  background: radial-gradient(circle at 50% 50%, rgba(198, 166, 93, 0.08) 0%, rgba(17, 17, 17, 1) 70%);
+}
+
+/* Stitch login_screen — logo-underline */
+.logo-underline {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c6a65d, transparent);
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* Stitch establishment_selector */
+.card-hover-effect:hover {
+  border-color: #c6a65d;
+  box-shadow: 0 0 20px rgba(198, 166, 93, 0.15);
+  transform: translateY(-2px);
+}
+.card-hover-effect {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Stitch dashboard */
+.glass-panel {
+  background: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(10px);
+}
+
+/* Stitch session_screen */
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #403a2b; border-radius: 10px; }
+.active-glow {
+  box-shadow: 0 0 15px rgba(198, 166, 93, 0.15);
+  border-left: 2px solid #c6a65d;
+}
+.rec-pulse { animation: rec-pulse-kf 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+@keyframes rec-pulse-kf { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* Stitch transcript_review */
+.custom-scroll::-webkit-scrollbar { width: 4px; }
+.custom-scroll::-webkit-scrollbar-track { background: #111111; }
+.custom-scroll::-webkit-scrollbar-thumb { background: #c6a65d; border-radius: 10px; }
+.serif-title { font-family: 'Playfair Display', serif; }
+
+/* Golden V loading — Vision brand loading state */
+.vision-v-pulse {
+  animation: vision-v-pulse-kf 1.6s ease-in-out infinite;
+}
+@keyframes vision-v-pulse-kf {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+.shadow-gold-glow {
+  box-shadow: 0 0 32px rgba(198, 166, 93, 0.25);
+}

@@ -1,0 +1,10 @@
+{
+  "examType": "Shoulder",
+  "headings": ["Inspection", "Active Range of Motion", "Swelling", "Scarring"],
+  "placeholders": {
+    "Inspection": "Visual inspection of shoulder contour, skin, surgical sites.",
+    "Active Range of Motion": "Active ROM: flexion, extension, abduction, internal/external rotation.",
+    "Swelling": "Swelling or effusion. Not visually assessable if not applicable.",
+    "Scarring": "Scar location, healing, adhesions. Not visually assessable if not applicable."
+  }
+}

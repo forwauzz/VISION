@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vision | Select Establishment</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c6a65d",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#121212", // Matte charcoal for executive feel
+                        "neutral-charcoal": "#1e1e1e",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .card-hover-effect {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover-effect:hover {
+            border-color: #c6a65d;
+            box-shadow: 0 0 20px rgba(198, 166, 93, 0.15);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-white font-display overflow-x-hidden min-h-screen">
+<div class="relative flex flex-col min-h-screen w-full">
+<!-- Main Container -->
+<div class="layout-container flex h-full grow flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-white/10 px-8 py-4 bg-background-dark/50 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">visibility</span>
+</div>
+<h2 class="text-xl font-light tracking-[0.2em] uppercase">Vision</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-3">
+<button class="flex size-10 items-center justify-center rounded-lg bg-neutral-charcoal text-white/70 hover:text-primary hover:bg-neutral-charcoal/80 transition-colors border border-white/5">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+<button class="flex size-10 items-center justify-center rounded-lg bg-neutral-charcoal text-white/70 hover:text-primary hover:bg-neutral-charcoal/80 transition-colors border border-white/5">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+<div class="h-10 w-[1px] bg-white/10 mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-semibold text-white">Dr. Alexander Vance</p>
+<p class="text-[10px] text-white/50 uppercase tracking-widest">Administrator</p>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-primary/30" data-alt="Professional portrait of a male doctor" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA82NsT0sWCzjqkA2o7h-MbtCRUkI2Ih0G82nemwUboPnM3AXzZoR-ufL4vZ_O2PHtdxeCyS4KK5Si2KVIc-UkIlo5Nh7gTIRJTmt23hK2o_NBQ52YGRgvFMePD_HRSjsW-3PUVPy0qbjhWcvzWGOD_7aAMKVsuIUGBzx0QyuInpV0XT6LgLCLL9hHRpe_i8iCPOJXLGgY1x4aC1M8Zaeufs1UU2H6EHC5ibFqwZzyt33aCdz4B7v5X25zB_dDU5YAaAN1QLLUgkpE");'></div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col items-center px-4 py-12 lg:py-20">
+<div class="w-full max-w-[1200px] flex flex-col gap-10">
+<!-- Title Section -->
+<div class="flex flex-col gap-2 text-center items-center">
+<h1 class="text-4xl md:text-5xl font-extralight tracking-tight text-white mb-2">
+                            Select <span class="text-primary font-medium">Establishment</span>
+</h1>
+<p class="text-white/50 text-base md:text-lg max-w-xl font-light leading-relaxed">
+                            Choose a facility to manage your clinical data, staff scheduling, and daily operations.
+                        </p>
+</div>
+<!-- Search Bar Area -->
+<div class="flex justify-center px-4">
+<div class="relative w-full max-w-xl">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30">search</span>
+<input class="w-full bg-neutral-charcoal border border-white/5 rounded-xl py-4 pl-12 pr-4 text-white placeholder:text-white/20 focus:ring-1 focus:ring-primary focus:border-primary transition-all text-sm tracking-wide" placeholder="Search by facility name or location..." type="text"/>
+</div>
+</div>
+<!-- Establishment Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+<!-- Card 1 -->
+<div class="card-hover-effect flex flex-col bg-neutral-charcoal/40 border border-white/5 rounded-xl overflow-hidden cursor-pointer group">
+<div class="relative h-48 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="absolute inset-0 bg-primary/10 group-hover:bg-primary/0 transition-colors z-0"></div>
+<div class="w-full h-full bg-center bg-cover" data-alt="Modern minimalist hospital reception area" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBougnBWS33iJQi2ocFUBbIu3x3SarSSO1hS4ZsTZ0OuIvDXW0rGrWFr_czqAHfAqhNeEc9CzCPxloXkL-gYQhaB_B5e2IlOvMQi8R13Vq5aTR4JHRX7dUkXBvXlFFOIi5jv9itdm77KH6bBYb3dKssWSOBN7pDdQIXwvtaY27FujTpPH8N3UrWO2dw25RDvZIWYhWGP_CWp5Y3Z_QeyHFyuek8G8AbObpxOSMScz-_SHD_BjhUG36ijZmoYVQBzLxbsy3AcGgnvEs");'></div>
+<div class="absolute bottom-4 left-4 z-20">
+<span class="bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded backdrop-blur-md border border-primary/30">
+                                        Primary Center
+                                    </span>
+</div>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<h3 class="text-white text-xl font-semibold group-hover:text-primary transition-colors">St. Mary’s Surgical Center</h3>
+<p class="text-white/40 text-xs uppercase tracking-widest mt-1">Tertiary Care Hospital</p>
+</div>
+<div class="flex items-center gap-2 text-white/60">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-light">Harley St, London, UK</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex justify-between items-center">
+<span class="text-white/30 text-[11px]">Last active: 2h ago</span>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="card-hover-effect flex flex-col bg-neutral-charcoal/40 border border-white/5 rounded-xl overflow-hidden cursor-pointer group">
+<div class="relative h-48 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="w-full h-full bg-center bg-cover" data-alt="Clean and high-tech ophthalmology clinic interior" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDrBiBlV1sDrVkFZcVbzIaQ8t6XpFHpAFmCD5_vQpvydG4-zBNvqeEM6sUJ54a79kXSoX42JPMx4sqUXFtLqrwsu06cpxeAGJ-y0McW52PMUHODv7ven1Zt6SQBiKmTXbMTuhr9-lLU-ePWq8Vvh3XwTRoe9n-g0PLDBRf4_zeDfxl7nLpM__zmjA1Ku6sn_yWPybaqvti_Ne6DlWHErzILiCah9FHykCb_RM_UrmS11him9SVA_yFTeY4snfxN--5KJleTJ7bNzs8");'></div>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<h3 class="text-white text-xl font-semibold group-hover:text-primary transition-colors">City Vision Clinic</h3>
+<p class="text-white/40 text-xs uppercase tracking-widest mt-1">Specialized Clinic</p>
+</div>
+<div class="flex items-center gap-2 text-white/60">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-light">Deansgate, Manchester, UK</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex justify-between items-center">
+<span class="text-white/30 text-[11px]">Last active: 5d ago</span>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="card-hover-effect flex flex-col bg-neutral-charcoal/40 border border-white/5 rounded-xl overflow-hidden cursor-pointer group">
+<div class="relative h-48 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="w-full h-full bg-center bg-cover" data-alt="Large contemporary metropolitan hospital building exterior" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB43HQ_LzD6kQsvpm0xjmk3IyOBlMj8zvIKesKQTNRAcsBgw_e397yc9omlWaNLqka0gEajOcQbnmbNrjHOicEJeipkU_4LwXcsgIYVXIIsKWRsybNYuoALZoeMEnuNqq9k0BbqDAaFXZ6FmhJYwDCvysdkkYREtE3H234EB41IGppGcFvh18ORoY0uItMJlGkdp3WZXqNosZRVSXYBnAFA-DyF4LsU5FQX2VAmV1-fWyhpfuqf1P5qb2yyeAzzC1SOQ4OLo7HHAek");'></div>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<h3 class="text-white text-xl font-semibold group-hover:text-primary transition-colors">Metropolitan Eye Hospital</h3>
+<p class="text-white/40 text-xs uppercase tracking-widest mt-1">General Hospital</p>
+</div>
+<div class="flex items-center gap-2 text-white/60">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-light">Colmore Row, Birmingham, UK</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex justify-between items-center">
+<span class="text-white/30 text-[11px]">Last active: 1h ago</span>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="card-hover-effect flex flex-col bg-neutral-charcoal/40 border border-white/5 rounded-xl overflow-hidden cursor-pointer group">
+<div class="relative h-48 w-full overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+<div class="w-full h-full bg-center bg-cover" data-alt="Luxurious private healthcare room interior" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCiklKclF4D-g-ZO2LwQFLwu-tVZukcJITvarQaeOe_F_CsZCmfN8m_7T2VmEco0spfzMWiDpHALkyAgpOud8Cfa7dPCoRvtjSnV4Seiq-ZX94jAyEbE_iepYLGTOJtyr92OtehPbjXoJG0GbW__JZAJyuBYaF-WF2xvPlymcxcLx_fNAea7urOmR0ns-TdzQkpU0cqFBkffqs0levukpx8KmgekGjhcQ4jpY6b39ednQemMBAPnD01goH8IwfNN2bIfA3t6lJGPvU");'></div>
+</div>
+<div class="p-6 flex flex-col gap-4">
+<div>
+<h3 class="text-white text-xl font-semibold group-hover:text-primary transition-colors">Premium Ocular Care</h3>
+<p class="text-white/40 text-xs uppercase tracking-widest mt-1">Private Care</p>
+</div>
+<div class="flex items-center gap-2 text-white/60">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span class="text-sm font-light">Mayfair, London, UK</span>
+</div>
+<div class="pt-4 border-t border-white/5 flex justify-between items-center">
+<span class="text-white/30 text-[11px]">Last active: 12h ago</span>
+<span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Add New Establishment Card -->
+<div class="flex flex-col items-center justify-center bg-transparent border-2 border-dashed border-white/10 rounded-xl min-h-[400px] hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group">
+<div class="size-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+<span class="material-symbols-outlined text-white/40 text-3xl group-hover:text-primary">add</span>
+</div>
+<p class="text-white/60 font-medium group-hover:text-white transition-colors">Add New Establishment</p>
+<p class="text-white/30 text-xs mt-2 text-center px-8">Expand your network by adding a new medical facility or clinic.</p>
+</div>
+</div>
+<!-- Footer / Utility -->
+<div class="flex flex-col sm:flex-row justify-between items-center gap-6 mt-12 py-8 border-t border-white/5">
+<div class="flex items-center gap-8 text-white/40 text-sm">
+<a class="hover:text-primary transition-colors" href="#">System Status</a>
+<a class="hover:text-primary transition-colors" href="#">Support Center</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-white/30 text-xs tracking-widest uppercase">Secured by Vision Core</span>
+<div class="flex size-8 items-center justify-center rounded-lg border border-white/10">
+<span class="material-symbols-outlined text-sm text-primary">verified_user</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

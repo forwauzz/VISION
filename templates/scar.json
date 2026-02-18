@@ -1,0 +1,10 @@
+{
+  "examType": "Scar",
+  "headings": ["Inspection", "Active Range of Motion", "Swelling", "Scarring"],
+  "placeholders": {
+    "Inspection": "Inspection of scar site and surrounding tissue.",
+    "Active Range of Motion": "ROM relevant to scar location. Not visually assessable if N/A.",
+    "Swelling": "Swelling at or near scar. Not visually assessable if not applicable.",
+    "Scarring": "Scar characteristics: length, width, color, maturity, tethering."
+  }
+}

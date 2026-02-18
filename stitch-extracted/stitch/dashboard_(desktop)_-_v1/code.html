@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vision Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c6a65d",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#121212",
+                        "surface-dark": "#1e1e1e",
+                        "border-dark": "#2a2a2a",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .gold-glow {
+            box-shadow: 0 0 20px rgba(198, 166, 93, 0.15);
+        }
+        .glass-panel {
+            background: rgba(30, 30, 30, 0.6);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary/30">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<!-- Left: Logo & Brand -->
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2.5">
+<div class="size-9 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-background-dark font-bold text-2xl">visibility</span>
+</div>
+<span class="text-xl font-bold tracking-tight text-white uppercase letter-spacing-widest">Vision</span>
+</div>
+<!-- Establishment Dropdown -->
+<div class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-dark border border-border-dark hover:border-primary/50 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-primary text-sm">storefront</span>
+<span class="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">Downtown Branch</span>
+<span class="material-symbols-outlined text-slate-500 text-sm">expand_more</span>
+</div>
+</div>
+<!-- Right: User Profile & Actions -->
+<div class="flex items-center gap-6">
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-sm font-semibold text-primary border-b-2 border-primary pb-0.5" href="#">Dashboard</a>
+<a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#">Analytics</a>
+<a class="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#">Establishments</a>
+</nav>
+<div class="h-6 w-px bg-border-dark mx-2"></div>
+<div class="flex items-center gap-4">
+<div class="flex flex-col items-end hidden sm:flex">
+<span class="text-sm font-bold text-white leading-none">Alexander Wright</span>
+<span class="text-[10px] text-primary uppercase tracking-widest mt-1 font-semibold">Administrator</span>
+</div>
+<div class="relative group cursor-pointer">
+<div class="size-10 rounded-full border-2 border-border-dark group-hover:border-primary transition-all p-0.5">
+<img alt="User avatar" class="rounded-full w-full h-full object-cover" data-alt="Professional male portrait for user profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcga_wSdkRQTchXdjuyfVOc8J-ygzwH1sqf79dzyrncUtdKPfxtG4M-MZEZQzEtacZEZBHrsa_YNhM4Tt_W2bUXovl0XpeIdLEyA04r899Aaq915I9a7ImM5b1p7e9YPyxKtXB6IfizGQ5MfcjmfKXJBIJ3l-QHn3p1u4bh1423TqAIn5lqBuxWK_cWjhfNqj7oK6dcJ5U9uKYNN7jL4MtUfyMZc5juIrf0LGxj-THyz6glkG25VbtPnXOMrmC2Wcm3bvR1rMZkmI"/>
+</div>
+<!-- Logout small indicator -->
+<div class="absolute -bottom-1 -right-1 bg-background-dark border border-border-dark rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[12px] text-red-400">logout</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 py-12">
+<!-- Hero Section -->
+<section class="flex flex-col items-center justify-center text-center py-20 mb-12">
+<h2 class="text-slate-500 text-sm font-bold uppercase tracking-[0.3em] mb-4">Command Center</h2>
+<h1 class="text-4xl md:text-5xl font-bold text-white mb-8 tracking-tight">Ready for a new session?</h1>
+<div class="relative group">
+<div class="absolute -inset-1 bg-primary/20 rounded-xl blur-xl group-hover:bg-primary/30 transition duration-500"></div>
+<button class="relative flex items-center gap-3 px-10 py-5 bg-primary hover:bg-[#d4b56d] text-background-dark text-lg font-bold rounded-xl transition-all active:scale-[0.98] gold-glow">
+<span class="material-symbols-outlined font-bold">play_arrow</span>
+                    BEGIN SESSION
+                </button>
+</div>
+<p class="mt-8 text-slate-500 max-w-md text-sm leading-relaxed">
+                Start a real-time analysis session for <span class="text-slate-300 font-medium italic">Downtown Branch</span>. All data is encrypted and logged.
+            </p>
+</section>
+<!-- Sessions Management -->
+<section class="max-w-4xl mx-auto">
+<div class="flex items-center justify-between mb-8">
+<div class="flex flex-col">
+<h2 class="text-2xl font-bold text-white tracking-tight">Recent Sessions</h2>
+<p class="text-slate-500 text-xs mt-1">Showing the last 5 activities</p>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search -->
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+<input class="bg-surface-dark border-border-dark focus:border-primary focus:ring-0 rounded-lg pl-10 pr-4 py-2 text-sm text-slate-300 w-64 transition-all" placeholder="Search sessions..." type="text"/>
+</div>
+<button class="text-xs font-bold text-primary hover:underline underline-offset-4 tracking-wider uppercase">View History</button>
+</div>
+</div>
+<!-- Sessions List -->
+<div class="space-y-4">
+<!-- Session Item 1 (In Progress) -->
+<div class="group relative bg-surface-dark border border-border-dark hover:border-primary/40 rounded-xl p-5 flex items-center justify-between transition-all hover:bg-surface-dark/80 cursor-pointer">
+<div class="flex items-center gap-5">
+<div class="size-12 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">sensors</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="text-white font-bold tracking-tight">Morning Peak Analysis</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-primary/20 text-primary border border-primary/30 flex items-center gap-1">
+<span class="size-1.5 rounded-full bg-primary animate-pulse"></span>
+                                    In Progress
+                                </span>
+</div>
+<p class="text-slate-500 text-xs mt-1 font-medium">#VSN-9284 • Started at 08:45 AM • Area: Main Lobby</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-slate-300 text-sm font-bold">1h 12m</p>
+<p class="text-slate-500 text-[10px] uppercase">Duration</p>
+</div>
+<span class="material-symbols-outlined text-slate-600 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Session Item 2 (Completed) -->
+<div class="group relative bg-surface-dark border border-border-dark hover:border-primary/40 rounded-xl p-5 flex items-center justify-between transition-all hover:bg-surface-dark/80 cursor-pointer">
+<div class="flex items-center gap-5">
+<div class="size-12 rounded-lg bg-slate-800 border border-border-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-500">history</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="text-white font-bold tracking-tight">Closing Security Sweep</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-border-dark">
+                                    Completed
+                                </span>
+</div>
+<p class="text-slate-500 text-xs mt-1 font-medium">#VSN-9212 • Yesterday, 11:30 PM • Area: Service Entrance</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-slate-300 text-sm font-bold">45m</p>
+<p class="text-slate-500 text-[10px] uppercase">Duration</p>
+</div>
+<span class="material-symbols-outlined text-slate-600 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Session Item 3 (Completed) -->
+<div class="group relative bg-surface-dark border border-border-dark hover:border-primary/40 rounded-xl p-5 flex items-center justify-between transition-all hover:bg-surface-dark/80 cursor-pointer">
+<div class="flex items-center gap-5">
+<div class="size-12 rounded-lg bg-slate-800 border border-border-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-500">history</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="text-white font-bold tracking-tight">Weekly Inventory Audit</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-border-dark">
+                                    Completed
+                                </span>
+</div>
+<p class="text-slate-500 text-xs mt-1 font-medium">#VSN-8994 • Oct 14, 02:00 PM • Area: Storage Unit B</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-slate-300 text-sm font-bold">3h 20m</p>
+<p class="text-slate-500 text-[10px] uppercase">Duration</p>
+</div>
+<span class="material-symbols-outlined text-slate-600 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+<!-- Session Item 4 (Completed) -->
+<div class="group relative bg-surface-dark border border-border-dark hover:border-primary/40 rounded-xl p-5 flex items-center justify-between transition-all hover:bg-surface-dark/80 cursor-pointer">
+<div class="flex items-center gap-5">
+<div class="size-12 rounded-lg bg-slate-800 border border-border-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-slate-500">history</span>
+</div>
+<div>
+<div class="flex items-center gap-3">
+<h3 class="text-white font-bold tracking-tight">VIP Arrival Monitoring</h3>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-400 border border-border-dark">
+                                    Completed
+                                </span>
+</div>
+<p class="text-slate-500 text-xs mt-1 font-medium">#VSN-8950 • Oct 12, 06:15 PM • Area: VIP Lounge</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="text-right">
+<p class="text-slate-300 text-sm font-bold">1h 05m</p>
+<p class="text-slate-500 text-[10px] uppercase">Duration</p>
+</div>
+<span class="material-symbols-outlined text-slate-600 group-hover:text-primary transition-colors">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Footer Meta -->
+<div class="mt-12 pt-8 border-t border-border-dark flex items-center justify-between text-[10px] text-slate-600 uppercase tracking-[0.2em] font-bold">
+<div class="flex gap-6">
+<span>System Status: <span class="text-emerald-500">Operational</span></span>
+<span>Lat: 24ms</span>
+</div>
+<div>
+                    Vision v2.4.0-Stable • © 2024
+                </div>
+</div>
+</section>
+</main>
+<!-- Side Decoration (Subtle background elements) -->
+<div class="fixed top-1/4 -left-32 size-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="fixed bottom-0 -right-32 size-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+</body></html>

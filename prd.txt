@@ -1,0 +1,398 @@
+PRODUCT REQUIREMENTS DOCUMENT (PRD)
+Product Name
+Vision
+1. Product Vision
+
+Vision is a web-native, mobile-responsive multimodal documentation platform that enables clinicians to:
+
+Capture video inside the browser
+
+Record and transcribe audio
+
+Capture timestamped frames
+
+Map frames to transcript segments
+
+Generate structured specialty-based documentation
+
+Edit all layers before export
+
+Vision is designed as a multi-establishment SaaS application, allowing users to belong to and switch between multiple clinical entities.
+
+This MVP validates:
+
+Web-based multimodal capture
+
+Timestamp-linked documentation
+
+Multi-tenant architecture foundation
+
+Immediate documentation value
+
+Vision is not a diagnostic system.
+
+2. Core Objectives
+Primary Objective
+
+Build a web-native MVP that:
+
+Supports simulated login
+
+Supports multiple establishments per user
+
+Enables camera + audio capture in-browser
+
+Maps frames to transcript timestamps
+
+Applies structured templates
+
+Allows layered editing
+
+Demonstrates immediate documentation acceleration
+
+3. Multi-Establishment Architecture (Critical Addition)
+Concept
+
+A user may belong to multiple establishments (clinics, hospitals, offices).
+
+Example:
+
+User: Dr. Smith
+Establishments:
+
+Downtown Ortho Clinic
+
+Westside Plastic Surgery
+
+User must be able to:
+
+Select active establishment after login
+
+Create sessions under a specific establishment
+
+Keep sessions logically separated
+
+MVP Data Model (Conceptual)
+
+User
+
+id
+
+email
+
+name
+
+Establishment
+
+id
+
+name
+
+type (clinic, hospital, private office)
+
+Membership
+
+user_id
+
+establishment_id
+
+role (admin, clinician)
+
+Session
+
+id
+
+user_id
+
+establishment_id
+
+exam_type
+
+timestamps
+
+transcript
+
+frames
+
+structured_output
+
+Even if database is mocked for MVP, the model must be architecturally correct.
+
+4. Authentication (Simulated but Structured)
+
+MVP Requirements:
+
+Email/password login screen
+
+Fake validation (hardcoded users acceptable)
+
+After login:
+
+If user has >1 establishment → show selector screen
+
+If only 1 → auto-enter
+
+Store:
+
+user_id
+
+active_establishment_id
+
+session in local storage
+
+Goal:
+Prepare for real auth without building full auth system.
+
+5. Functional Requirements
+5.1 Dashboard
+
+After establishment selection, user sees:
+
+“New Session” button
+
+List of recent sessions (mocked or local)
+
+Current establishment displayed clearly
+
+Must show:
+
+Active Establishment: Downtown Ortho Clinic
+
+Switch establishment option always visible.
+
+5.2 Session Creation
+
+User selects:
+
+Exam type (Shoulder / Scar)
+
+Clicks “Start Session”
+
+System records:
+
+session_id
+
+user_id
+
+establishment_id
+
+start timestamp
+
+5.3 Video Capture (Web-Native)
+
+System must:
+
+Use getUserMedia
+
+Display camera feed in-app
+
+Record session
+
+Allow manual frame capture
+
+Timestamp each frame
+
+Acceptance Criteria:
+
+Works on laptop
+
+Works on tablet
+
+No external windows
+
+Frame timestamp accurate
+
+5.4 Audio Capture & Transcription
+
+System must:
+
+Record audio via MediaRecorder
+
+Timestamp audio start
+
+Send audio to transcription API
+
+Return transcript (preferably segmented with timestamps)
+
+Transcript must:
+
+Be editable
+
+Retain time metadata
+
+5.5 Frame ↔ Transcript Mapping (Core Differentiator)
+
+Each frame must:
+
+Store timestamp
+
+Automatically link to nearest transcript segment
+
+UI must allow:
+
+Clicking frame → highlights transcript
+
+Clicking transcript segment → shows linked frames
+
+This creates immediate perceived value.
+
+5.6 Template Application
+
+System must:
+
+Load specialty template based on exam type
+
+Send frames + transcript to backend
+
+Generate structured visual findings
+
+Merge into structured exam output
+
+Templates must:
+
+Be defined in JSON
+
+Enforce headings
+
+Prevent hallucinated sections
+
+Use “Not visually assessable” when necessary
+
+5.7 Layered Editing Interface (Critical UX Requirement)
+
+User must be able to edit independently:
+
+Layer 1:
+
+Raw transcript
+
+Layer 2:
+
+Frame-based visual descriptions
+
+Layer 3:
+
+Final structured exam output (rich text)
+
+UI Layout (Suggested):
+
+Left Column:
+Transcript timeline (editable)
+
+Right Column:
+Frame thumbnails with timestamps + visual descriptions
+
+Bottom Panel:
+Structured template output (editable rich text)
+
+Edits must not break timestamp associations.
+
+6. Data Schema (MVP-Level)
+{
+  "user_id": "",
+  "establishment_id": "",
+  "session_id": "",
+  "exam_type": "",
+  "timestamps": {
+    "start": "",
+    "end": ""
+  },
+  "audio_transcript": [
+    {
+      "text": "",
+      "start_time": "",
+      "end_time": ""
+    }
+  ],
+  "frames": [
+    {
+      "frame_id": "",
+      "timestamp": "",
+      "linked_transcript_segment_id": "",
+      "visual_description": ""
+    }
+  ],
+  "structured_exam": {
+    "Inspection": "",
+    "Active Range of Motion": "",
+    "Swelling": "",
+    "Scarring": ""
+  }
+}
+
+7. Mobile Responsiveness Requirements
+
+Must function on:
+
+Desktop browser
+
+Tablet (iPad-class device)
+
+Large phone (not primary target, but functional)
+
+UI constraints:
+
+Buttons large enough for clinical environment
+
+Clear recording indicator
+
+No small clickable zones
+
+Responsive layout stacks vertically on mobile
+
+8. What Defines MVP Success
+
+Vision MVP is successful if:
+
+User logs in
+
+Selects establishment
+
+Captures video + audio
+
+Captures frames
+
+Sees transcript
+
+Sees linked frames
+
+Sees structured output
+
+Can edit and export JSON
+
+Understands value within one session
+
+User reaction target:
+
+“This saves me writing time.”
+
+9. Non-Goals (Explicitly Out of Scope)
+
+Deterministic pose detection
+
+Automatic movement classification
+
+EMR export
+
+Regulatory compliance automation
+
+Production database hardening
+
+Full multi-user admin panel
+
+Real-time collaborative editing
+
+10. Strategic Alignment
+
+This PRD:
+
+Aligns with web-native direction
+
+Supports future SaaS scaling
+
+Introduces real multi-tenant foundation
+
+Demonstrates immediate clinical value
+
+Avoids overengineering
+

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vision | Review &amp; Merge Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c6a65d",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#111111",
+                        "charcoal-accent": "#1a1a1a",
+                        "border-muted": "#2a2824",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: #c6a65d #111111;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #111111;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #c6a65d;
+            border-radius: 10px;
+        }
+        .serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-200 antialiased overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex h-16 items-center justify-between border-b border-border-muted bg-background-dark px-6 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-3xl">visibility</span>
+<h2 class="text-xl font-extrabold tracking-tight text-white font-display">VISION</h2>
+</div>
+<div class="h-6 w-px bg-border-muted"></div>
+<h1 class="text-sm font-semibold text-slate-400 tracking-wider uppercase">Review &amp; Merge</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-bold text-primary tracking-wide">LIVE SYNC</span>
+</div>
+<button class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-background-dark transition-all hover:bg-primary/90">
+<span class="material-symbols-outlined text-sm">ios_share</span>
+<span>Export</span>
+</button>
+<div class="h-8 w-8 rounded-full border border-primary/30 bg-charcoal-accent p-0.5">
+<img alt="User Profile" class="h-full w-full rounded-full object-cover" data-alt="Medical professional profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRsbSRGrKxLe9gcYh0ZUW0RSBcPK55SYD38r8_9ZIqfB1Pto7zbCQrqDCx5VmBk05qcxvMny0txont3ygd6DwFzUXztzBiZl7zxZZQxKBNIgzSgzxtoKKjOxItu8_hJOWsV1WefQCif5wairL4w7mPvXRiinQ0SxZO3KfRRdedkm4UUNnS70gf32xh1U7MWJBtD0zmz7N-0-UVzLGRQfhqzHzQK1cUo2V9tYf9RHxYsG9xH1MqgJTmUMGOzhZ_ZkQ0C-4QIz21nLM"/>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex flex-1 overflow-hidden">
+<!-- Left Column: Audio Transcript -->
+<section class="flex w-1/4 flex-col border-r border-border-muted bg-charcoal-accent/50">
+<div class="flex items-center justify-between border-b border-border-muted p-4">
+<h3 class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+<span class="material-symbols-outlined text-lg">mic</span>
+                    Audio Transcript
+                </h3>
+<span class="text-[10px] font-medium text-slate-500">24:12 TOTAL</span>
+</div>
+<div class="custom-scroll flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Transcript Block 1 -->
+<div class="group relative rounded-xl border border-transparent p-4 transition-all hover:border-primary/30 hover:bg-primary/5">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-primary/80">00:12</span>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-white">
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+<p class="text-sm leading-relaxed text-slate-300 outline-none focus:text-white" contenteditable="true">
+                        Patient presents with initial symptoms of fatigue and persistent swelling in the lower left extremity. No history of recent trauma or significant travel reported.
+                    </p>
+</div>
+<!-- Transcript Block 2 (Active/Selected) -->
+<div class="relative rounded-xl border border-primary bg-primary/10 p-4">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-primary">00:45</span>
+<span class="material-symbols-outlined text-lg text-primary">check_circle</span>
+</div>
+<p class="text-sm leading-relaxed text-white font-medium" contenteditable="true">
+                        Observation of localized swelling. Pain scale reported at 6/10. Pulse is palpable but diminished compared to the contralateral limb.
+                    </p>
+<div class="absolute -right-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
+<div class="size-6 rotate-45 bg-primary/10 border-r border-t border-primary"></div>
+</div>
+</div>
+<!-- Transcript Block 3 -->
+<div class="group relative rounded-xl border border-transparent p-4 transition-all hover:border-primary/30 hover:bg-primary/5">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-primary/80">01:20</span>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-white">
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+<p class="text-sm leading-relaxed text-slate-300 outline-none focus:text-white" contenteditable="true">
+                        Surgical site preparation complete. Sterility protocols confirmed. Beginning incision at 01:22.
+                    </p>
+</div>
+<!-- Transcript Block 4 -->
+<div class="group relative rounded-xl border border-transparent p-4 transition-all hover:border-primary/30 hover:bg-primary/5">
+<div class="flex justify-between items-start mb-2">
+<span class="text-xs font-bold text-primary/80">02:05</span>
+<button class="opacity-0 group-hover:opacity-100 transition-opacity text-primary hover:text-white">
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+</div>
+<p class="text-sm leading-relaxed text-slate-300 outline-none focus:text-white" contenteditable="true">
+                        Initial dissection reveals significant arterial plaque. Recommend immediate stenting procedure if lumen diameter is &lt; 30%.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Center Column: Video Context -->
+<section class="flex flex-1 flex-col border-r border-border-muted bg-background-dark">
+<div class="flex items-center justify-between border-b border-border-muted p-4">
+<h3 class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+<span class="material-symbols-outlined text-lg">videocam</span>
+                    Video Context &amp; OCR
+                </h3>
+</div>
+<div class="custom-scroll flex-1 overflow-y-auto p-6 space-y-6">
+<!-- OCR/Visual Card 1 -->
+<div class="rounded-xl border border-border-muted bg-charcoal-accent overflow-hidden shadow-2xl">
+<div class="aspect-video w-full bg-slate-800 relative group">
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute bottom-3 left-4 flex items-center gap-2">
+<span class="text-[10px] bg-red-600 px-1.5 py-0.5 rounded font-bold">REC</span>
+<span class="text-xs font-mono">00:45:12</span>
+</div>
+<div class="absolute top-4 right-4 flex gap-2">
+<span class="bg-black/40 backdrop-blur-md px-2 py-1 rounded text-[10px] border border-white/10 uppercase tracking-tighter">AI Analysis Active</span>
+</div>
+<div class="flex h-full items-center justify-center">
+<div class="w-2/3 h-px bg-primary/40 absolute top-1/2 animate-pulse"></div>
+<div class="w-1/2 h-1/2 border border-primary/20 rounded-lg"></div>
+</div>
+</div>
+<div class="p-4 border-t border-primary/40 bg-primary/5">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[10px] font-bold text-primary uppercase">OCR Detected Elements</span>
+<button class="text-[10px] font-bold flex items-center gap-1 text-primary hover:text-white">
+                                MERGE ALL <span class="material-symbols-outlined text-xs">keyboard_double_arrow_right</span>
+</button>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between rounded bg-black/40 p-2 text-xs border border-white/5">
+<span class="text-slate-400">Blood Pressure</span>
+<span class="text-white font-mono">120/80 mmHg</span>
+</div>
+<div class="flex items-center justify-between rounded bg-black/40 p-2 text-xs border border-white/5">
+<span class="text-slate-400">O2 Saturation</span>
+<span class="text-white font-mono font-bold text-green-400">98%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Visual Observation Card -->
+<div class="rounded-xl border border-border-muted bg-charcoal-accent p-4 group hover:border-primary/20 transition-colors">
+<div class="flex gap-4">
+<div class="size-20 rounded-lg bg-slate-800 shrink-0 border border-white/5 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-gradient-to-br from-primary/20 to-charcoal-accent flex items-center justify-center">
+<span class="material-symbols-outlined text-primary/40">imagesmode</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-bold text-primary/60">01:22 SYNC</span>
+<button class="size-6 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-background-dark transition-all">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<h4 class="text-sm font-bold text-white mb-1">Incision Mapping</h4>
+<p class="text-xs text-slate-400 leading-relaxed">Visual confirmation of 5cm longitudinal incision at the femoral junction.</p>
+</div>
+</div>
+</div>
+<!-- Visual Observation Card 2 -->
+<div class="rounded-xl border border-border-muted bg-charcoal-accent p-4 group hover:border-primary/20 transition-colors opacity-60">
+<div class="flex gap-4">
+<div class="size-20 rounded-lg bg-slate-800 shrink-0 border border-white/5 flex items-center justify-center overflow-hidden">
+<div class="w-full h-full bg-gradient-to-tr from-blue-500/10 to-charcoal-accent flex items-center justify-center text-primary/40">
+<span class="material-symbols-outlined">biotech</span>
+</div>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-1">
+<span class="text-[10px] font-bold text-slate-600">02:15 PENDING</span>
+<button class="size-6 rounded-full bg-border-muted flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined text-xs">add</span>
+</button>
+</div>
+<h4 class="text-sm font-bold text-slate-300 mb-1">Plaque Morphology</h4>
+<p class="text-xs text-slate-500 leading-relaxed">Cross-sectional analysis of arterial wall calcification levels.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Column: Structured Report -->
+<section class="flex w-1/3 flex-col bg-charcoal-accent">
+<div class="flex items-center justify-between border-b border-border-muted p-4 bg-background-dark/30">
+<h3 class="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+<span class="material-symbols-outlined text-lg">description</span>
+                    Structured Report
+                </h3>
+<div class="flex items-center gap-2">
+<button class="p-1 rounded text-slate-500 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-lg">format_bold</span></button>
+<button class="p-1 rounded text-slate-500 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-lg">format_italic</span></button>
+<button class="p-1 rounded text-slate-500 hover:text-white hover:bg-white/5"><span class="material-symbols-outlined text-lg">list</span></button>
+</div>
+</div>
+<div class="custom-scroll flex-1 overflow-y-auto p-8 space-y-8 bg-gradient-to-b from-background-dark/50 to-transparent">
+<div class="space-y-3">
+<h2 class="serif-title text-2xl text-primary border-b border-primary/20 pb-2">Clinical Findings</h2>
+<div class="min-h-[100px] text-sm leading-relaxed text-slate-300 focus:outline-none" contenteditable="true">
+                        The patient, an adult male, presented with localized swelling and fatigue in the left lower extremity. Initial assessment showed a pulse pressure of 120/80 mmHg and a significant pain score of 6/10. Visual confirmation identified localized swelling without evidence of surface trauma.
+                    </div>
+</div>
+<div class="space-y-3">
+<h2 class="serif-title text-2xl text-primary border-b border-primary/20 pb-2">Surgical Technique</h2>
+<div class="min-h-[100px] text-sm leading-relaxed text-slate-400 focus:outline-none italic" contenteditable="true">
+                        Type or drag clinical data here to build the procedure narrative...
+                    </div>
+</div>
+<div class="space-y-3">
+<h2 class="serif-title text-2xl text-primary border-b border-primary/20 pb-2">Recommendations</h2>
+<ul class="list-disc ml-5 space-y-2 text-sm text-slate-300">
+<li contenteditable="true">Immediate doppler ultrasound to assess flow velocity.</li>
+<li contenteditable="true">Maintain elevation and monitor for changes in coloration.</li>
+<li contenteditable="true">Consult with vascular surgery regarding potential plaque buildup.</li>
+</ul>
+</div>
+<!-- Spacer for the bottom button -->
+<div class="h-20"></div>
+</div>
+<!-- Bottom Action Panel -->
+<div class="p-6 border-t border-border-muted bg-background-dark/80 backdrop-blur-md">
+<button class="w-full flex items-center justify-center gap-3 rounded-xl bg-primary py-4 text-sm font-black uppercase tracking-[0.2em] text-background-dark shadow-lg shadow-primary/20 transition-transform active:scale-95 hover:brightness-110">
+                    Finalize &amp; Archive Report
+                    <span class="material-symbols-outlined">verified</span>
+</button>
+<p class="text-[10px] text-center mt-3 text-slate-500 font-medium">Last autosaved at 14:42:01</p>
+</div>
+</section>
+</main>
+<!-- Context Indicators -->
+<div class="fixed bottom-4 left-4 flex gap-4 pointer-events-none">
+<div class="flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-[10px] text-slate-400 backdrop-blur-md border border-white/5">
+<span class="size-1.5 rounded-full bg-blue-500"></span>
+            Patient ID: #4492-AX
+        </div>
+<div class="flex items-center gap-2 rounded-full bg-black/60 px-3 py-1 text-[10px] text-slate-400 backdrop-blur-md border border-white/5">
+<span class="size-1.5 rounded-full bg-green-500"></span>
+            Encryption: AES-256
+        </div>
+</div>
+</body></html>

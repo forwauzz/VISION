@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vision | Surgical Documentation</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#c6a65d",
+                        "background-light": "#f8f7f6",
+                        "background-dark": "#111111",
+                        "charcoal-darker": "#0a0a0a",
+                        "panel-bg": "#1a1814",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #403a2b;
+            border-radius: 10px;
+        }
+        .active-glow {
+            box-shadow: 0 0 15px rgba(198, 166, 93, 0.15);
+            border-left: 2px solid #c6a65d;
+        }
+        .rec-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .4; }
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary/30 overflow-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex h-16 items-center justify-between border-b border-white/5 px-8 bg-charcoal-darker">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="size-6 text-primary">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold tracking-widest text-white font-serif italic">VISION</h1>
+</div>
+<div class="h-6 w-px bg-white/10"></div>
+<div class="flex flex-col">
+<span class="text-[10px] uppercase tracking-widest text-primary/70 font-bold">Session ID</span>
+<span class="text-sm font-medium">VS-9928 — 0042-XJ</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
+<span class="material-symbols-outlined text-sm text-primary">stethoscope</span>
+<span class="text-xs font-semibold tracking-wide">SURGEON: DR. ARIS</span>
+</div>
+<button class="p-2 text-white/60 hover:text-white transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="size-8 rounded-full border border-primary/30 p-0.5">
+<div class="h-full w-full rounded-full bg-cover bg-center" data-alt="Profile photo of Dr. Aris" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3RIlwqjAq3v9FhU_Wvq1eH84TbcFrxD5L1XFTI4DH00Z6zMgfeNEAVvi53gfq38eT1aF9KB-ILJ_Tmwum1tUYXeJXo8465xx1z1zWs_jIXVp4tFZAEBYMS2bPaBGdmkP7PLeqHblAkKgUhOipHDpRhsmGSfXMDv3tURpIm5XS7eayFM-zHrBhth9uRuzSSAUy-XMoRkp6cvmnk_otsC_FQBo8fAfwGI77FWsviqILhMdQxk9luS_wBCkJX9fabNAfd-Iv0OqtwbY')"></div>
+</div>
+</div>
+</header>
+<main class="flex h-[calc(100vh-112px)] w-full overflow-hidden">
+<!-- Left Sidebar: Transcript -->
+<aside class="w-80 border-r border-white/5 bg-charcoal-darker flex flex-col">
+<div class="p-5 border-b border-white/5 flex items-center justify-between">
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary/80">Live Transcript</h3>
+<span class="flex items-center gap-1.5 text-[10px] text-green-500 font-bold">
+<span class="size-1.5 rounded-full bg-green-500 animate-pulse"></span> LIVE
+                </span>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-6">
+<div class="space-y-1 opacity-50">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold text-primary">00:41:22</span>
+<span class="text-[10px] font-bold text-white/40">Dr. Aris</span>
+</div>
+<p class="text-sm leading-relaxed font-light text-white/80">Beginning the primary incision. Retracting the lateral muscle wall to expose the fascia.</p>
+</div>
+<div class="space-y-1 active-glow p-3 rounded-lg bg-primary/5">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold text-primary">00:42:05</span>
+<span class="text-[10px] font-bold text-white/60">Dr. Aris</span>
+</div>
+<p class="text-sm leading-relaxed font-medium">Suction required. Clearing the field. The arterial branch is visible now, confirming position.</p>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between items-center">
+<span class="text-[10px] font-bold text-primary">00:42:12</span>
+<span class="text-[10px] font-bold text-white/40">Assistant</span>
+</div>
+<p class="text-sm leading-relaxed font-light text-white/70 italic">Pressure stable at 110/75. Blood loss within normal parameters.</p>
+</div>
+<!-- Empty state visual filler -->
+<div class="h-20 w-full border-t border-dashed border-white/10 mt-4 flex items-center justify-center">
+<span class="text-[10px] uppercase tracking-tighter text-white/20">Listening for clinical input...</span>
+</div>
+</div>
+</aside>
+<!-- Center Panel: Video & Frames -->
+<section class="flex-1 bg-background-dark flex flex-col p-6 gap-6 overflow-y-auto custom-scrollbar">
+<!-- Video Recording Area -->
+<div class="relative group">
+<div class="absolute -inset-1 rounded-xl bg-primary/20 blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
+<div class="relative aspect-video rounded-lg border border-primary/40 bg-black overflow-hidden shadow-2xl">
+<div class="absolute inset-0 flex items-center justify-center bg-cover bg-center opacity-80" data-alt="Microscopic view of high-definition surgical procedure" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA6nVtFMHXJ2zpU6ieCzIruIqY6RC62w4dwWnMRgGIA94drHfV-ElYQ26Btt_0AApcXRHuozW3BwhEdBrVvvmaAmoQmuN_fIcuiynIOpnXPgq8wTKOXeQhhfKHLxNMxNSFNkMoUaGZUwsqKOK5nUVw9J8Pnsi1u3jcTdiIIBm8tfja-qLEi0Eg9DdHkRwZsG-JymkoZHqQsnfntajgATyLdVN8Up24GzowuQPjAbxAurs3h7T-cfXsPhZ1M9OdpdFafNqB5fTIJCYQ')">
+<!-- Play Overlay (Optional) -->
+<div class="size-20 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-primary cursor-pointer hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-4xl fill-1">play_arrow</span>
+</div>
+</div>
+<!-- HUD Overlays -->
+<div class="absolute top-4 left-4 flex items-center gap-3">
+<div class="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-500/50">
+<span class="size-2 rounded-full bg-red-600 rec-pulse"></span>
+<span class="text-[10px] font-bold tracking-widest text-white uppercase">REC</span>
+</div>
+<div class="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-white tracking-widest uppercase">
+                            4K HDR • 60 FPS
+                        </div>
+</div>
+<div class="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
+<span class="text-xs font-mono font-bold text-primary">00:42:15:08</span>
+</div>
+</div>
+</div>
+<!-- Key Frames Carousel -->
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-xs font-bold uppercase tracking-widest text-primary/80">Key Frames (12 Captured)</h3>
+<button class="text-xs text-white/40 hover:text-white flex items-center gap-1 transition-colors">
+                        View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
+<!-- Frame Card -->
+<div class="min-w-[180px] space-y-2 group cursor-pointer">
+<div class="aspect-video rounded border border-white/10 bg-charcoal-darker overflow-hidden group-hover:border-primary/50 transition-colors">
+<div class="h-full w-full bg-cover bg-center" data-alt="Captured surgical frame showing tissue incision" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-zSBqAQJPJ65O6T1OQiwhfe2S2noZbonpv687FksFWIXRO_YI1uSLE_J29F52WJnc0qHXG8cAe6jTTaNYEy9-hqHFIbQm8uOLSCt46yLUoyB2YkSHL2s887ffMqeJt3GO7mXnuSC8BMBeEWyV2dpto50ODyCwTbURaucns1b55Iat5b1eVzZc7XQEpLpN23Pwx3bzNm_SvQAWeSww30d6CGbWNONs_VT9y3MTVcO8cnrst2C3TLutZq4f9WRUlGraXjicDeFwR2E')"></div>
+</div>
+<div class="flex justify-between items-center px-1">
+<span class="text-[10px] font-bold text-primary/80">00:12:44</span>
+<span class="material-symbols-outlined text-xs text-white/30 group-hover:text-white">ios_share</span>
+</div>
+</div>
+<!-- Frame Card -->
+<div class="min-w-[180px] space-y-2 group cursor-pointer">
+<div class="aspect-video rounded border border-white/10 bg-charcoal-darker overflow-hidden group-hover:border-primary/50 transition-colors">
+<div class="h-full w-full bg-cover bg-center opacity-60" data-alt="Surgical frame of internal anatomical structure" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC-rHl0ou3GYrDBVxIK2Ja0DWwcbxvqwVAd-nyoJPixcUIZMRD7GF_HyXn3ai8i1FNc2FLQyOpK-MHR-NtPCDP0gpsb-1RdtgKwPazXs-S5pAEs6SAdmcDLtQgJuQoKxSeWrqaST6cMZChQaiKatHZfHq_sSARe4s32PTUcxJEy90RlNbft7Mm_qvyN4OW9mnLuQTejZsKwpkOJJIOh9bolMkilonQFaDO2sFkRC2CUUiIJ-xcoxvhfaiapXVKgxCbhi0HdQWU7c6Y')"></div>
+</div>
+<div class="flex justify-between items-center px-1">
+<span class="text-[10px] font-bold text-primary/80">00:25:10</span>
+<span class="material-symbols-outlined text-xs text-white/30 group-hover:text-white">ios_share</span>
+</div>
+</div>
+<!-- Frame Card -->
+<div class="min-w-[180px] space-y-2 group cursor-pointer">
+<div class="aspect-video rounded border border-white/10 bg-charcoal-darker overflow-hidden group-hover:border-primary/50 transition-colors">
+<div class="h-full w-full bg-cover bg-center" data-alt="Detailed capture of surgical site" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD0Rc3-JijnYy_XXTJJpH7Wye8_hRqmz-oYRw1WH3XiqjNwILqMbhj4YDO7k_Vu3BGjFBL7iZkZrk2SaRnXjgWvupNtMyWGDFMLLQuaKtwH483yrhxXAqQNdDZlTXl6_e6P-t62YU32Rr6rOF6_qETcOPifARKCAuxT4jKl0VF5tjdjtykT_GSZXkY6qgdUvFG5y9Su5124Sgb5EVLcCTbBJbDyp7NznKUatLbegixppMwHBQ-51wbuTmh6OLFhS2sG5Esusgu15zU')"></div>
+</div>
+<div class="flex justify-between items-center px-1">
+<span class="text-[10px] font-bold text-primary/80">00:38:22</span>
+<span class="material-symbols-outlined text-xs text-white/30 group-hover:text-white">ios_share</span>
+</div>
+</div>
+<!-- Frame Card -->
+<div class="min-w-[180px] space-y-2 group cursor-pointer">
+<div class="aspect-video rounded border border-white/10 bg-charcoal-darker overflow-hidden group-hover:border-primary/50 transition-colors">
+<div class="h-full w-full bg-cover bg-center" data-alt="Final closure capture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAeT2J7zYus9-g5uDoIBDBhIGy_jN2LEIdAUL8OekDBjmprJv8cQMuq9KK2lHjsPWVIvPfTbmOzLaBgW_6h0aYYkB8uV2RV7cTfGoN9NBkdj1vg6jSm7b6EkcdP8iDsDTJnXuQ2i1sQwrKCCIXKErM_vz1p9od-7b31OZsBqnX01ysSqqU3WZqsn-6L5zK8d8nhXPgj-Px3Ejb3QkFmGv-J1mKZpfaKOUraEukZjAbEzDG3QkV8oiG1KSPPYUHcu0czqAkVFR_vo5w')"></div>
+</div>
+<div class="flex justify-between items-center px-1">
+<span class="text-[10px] font-bold text-primary/80">00:41:59</span>
+<span class="material-symbols-outlined text-xs text-white/30 group-hover:text-white">ios_share</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Structured Output -->
+<aside class="w-96 border-l border-white/5 bg-charcoal-darker flex flex-col">
+<div class="p-5 border-b border-white/5 flex items-center justify-between bg-white/5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">clinical_notes</span>
+<h3 class="text-sm font-bold uppercase tracking-widest text-primary/80">Surgical Report</h3>
+</div>
+<button class="text-white/40 hover:text-white">
+<span class="material-symbols-outlined">fullscreen</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+<section class="space-y-3">
+<h4 class="font-serif italic text-lg text-primary border-b border-primary/20 pb-1">Procedure Notes</h4>
+<div class="text-sm font-light text-white/70 leading-relaxed bg-white/5 p-3 rounded border border-white/10 italic">
+                        Real-time drafting: Initial access gained via laparoscopy. Visualization of the abdominal cavity confirmed absence of adhesions...
+                    </div>
+</section>
+<section class="space-y-3">
+<h4 class="font-serif italic text-lg text-primary border-b border-primary/20 pb-1">Clinical Findings</h4>
+<ul class="space-y-3">
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-xs text-primary mt-1">check_circle</span>
+<p class="text-sm text-white/80"><span class="font-bold text-white">Vascularity:</span> Normal arterial flow observed in the target quadrant.</p>
+</li>
+<li class="flex gap-2">
+<span class="material-symbols-outlined text-xs text-primary mt-1">check_circle</span>
+<p class="text-sm text-white/80"><span class="font-bold text-white">Anatomy:</span> Confirmed presence of accessory nerve branch (Frame 00:25:10).</p>
+</li>
+</ul>
+</section>
+<section class="space-y-3">
+<h4 class="font-serif italic text-lg text-primary border-b border-primary/20 pb-1">Recommendations</h4>
+<div class="min-h-[100px] rounded border border-dashed border-white/10 flex items-center justify-center p-4">
+<span class="text-xs text-white/20 italic">Dictate or type recommendations here...</span>
+</div>
+</section>
+</div>
+<div class="p-4 border-t border-white/5 bg-charcoal-darker">
+<button class="w-full py-3 rounded-lg border border-primary/40 text-primary text-[10px] font-bold uppercase tracking-[2px] hover:bg-primary/10 transition-colors">
+                    Save Draft Report
+                </button>
+</div>
+</aside>
+</main>
+<!-- Bottom Bar: Control Panel -->
+<footer class="h-12 w-full border-t border-white/5 bg-charcoal-darker flex items-center justify-between px-8">
+<div class="flex items-center gap-10">
+<div class="flex items-center gap-3">
+<span class="text-[10px] font-bold text-white/40 uppercase tracking-widest">System Status</span>
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-green-500"></div>
+<span class="text-[10px] font-bold text-white/80">ENCRYPTED STREAM</span>
+</div>
+</div>
+<div class="h-4 w-px bg-white/10"></div>
+<div class="flex items-center gap-4 text-white/60">
+<span class="material-symbols-outlined text-lg">mic</span>
+<span class="material-symbols-outlined text-lg">videocam</span>
+<span class="material-symbols-outlined text-lg">hard_drive</span>
+</div>
+</div>
+<!-- Central Controls -->
+<div class="absolute left-1/2 -translate-x-1/2 flex items-center gap-4">
+<button class="flex items-center gap-2 px-6 py-1.5 rounded-full border border-primary text-primary hover:bg-primary hover:text-charcoal-darker transition-all duration-300">
+<span class="material-symbols-outlined text-lg">photo_camera</span>
+<span class="text-[10px] font-extrabold uppercase tracking-widest">Capture Frame</span>
+</button>
+<button class="flex items-center gap-2 px-8 py-1.5 rounded-full bg-white text-black hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-lg">cancel</span>
+<span class="text-[10px] font-extrabold uppercase tracking-widest">End Session</span>
+</button>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-end">
+<span class="text-[9px] font-bold text-primary/60 uppercase">Duration</span>
+<span class="text-xs font-mono font-bold tracking-tighter">00:42:15</span>
+</div>
+<button class="p-1.5 rounded-lg bg-white/5 border border-white/10 text-white/60 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-lg">help_outline</span>
+</button>
+</div>
+</footer>
+</body></html>
