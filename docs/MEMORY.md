@@ -46,7 +46,7 @@
 - **Phase 8** — Templates & schema: JSON templates in `templates/shoulder.json` and `templates/scar.json` (examType, headings, placeholders); `getTemplateForExamType(examType)` returns template per type; `mergeTranscriptAndFramesIntoStructuredExam(transcript, frames, template)` merges into structured_exam (Inspection = transcript text, others = frame descriptions or "Not visually assessable"); "Suggest from transcript & frames" button on Session and Transcript Review; `validateSessionPayload` and `validateStructuredExam` in `src/lib/validateSession.js` (PRD §6); validation warned on Export.
 - **Phase 9** — Start exam mode + Vision: "Start exam mode" overlay, auto-capture toggle (10s, cap 20), Web Speech nudge, POST /api/vision/describe-frames, "Generating report…", visionApi.js, visibility/autoCaptured, OPENAI_API_KEY in .env.example.
 - **Session summarization (OpenAI):** POST /api/vision/summarize-session (text-only): examType + transcript + frame descriptions → structured_exam (Inspection, ROM, Swelling, Scarring). "Summarize with AI" on Transcript Review merges AI output into report; no invention of findings (per DESIGN_FEEDBACK §5).
-- **No mock data (auth only simulated):** Establishments: mockLogin returns empty list; user adds via Add Establishment form (addEstablishment in auth.js). Dashboard redirects to establishment-selector if 0 establishments. All other data: real capture, real APIs, localStorage sessions.
+- **No mock data (auth only simulated):** Establishments: first-time login gets empty list; user adds via Add Establishment form (addEstablishment in auth.js). On re-login with same email, establishments are preserved so cllc/creoq etc. appear at establishment-selector; single establishment → redirect to dashboard. Dashboard redirects to establishment-selector if 0 establishments. All other data: real capture, real APIs, localStorage sessions.
 
 **Not yet done:** Post-MVP (e.g. PDF export, video storage, OCR).
 
@@ -60,7 +60,7 @@
 
 | Topic | Decision |
 |-------|----------|
-| **Auth** | **Simulated only.** No real backend login. mockLogin + localStorage; establishments list starts empty — user adds via “Add Establishment” (functional). |
+| **Auth** | **Simulated only.** No real backend login. mockLogin + localStorage; first login = empty establishments; re-login same email = establishments preserved — user adds via “Add Establishment” (functional). |
 | **Everything else** | **No mock data.** Real capture, real transcription (Deepgram), real frame descriptions (OpenAI Vision), real summarization (OpenAI), session data in localStorage, export real JSON. Establishments are user-added only. |
 | Exam type (Shoulder/Scar) | Add modal or step before Session (not in Stitch). |
 | Add New Establishment | MVP: button can be no-op or "Coming soon". |
@@ -82,3 +82,4 @@
 - 2025-02-17 — Phase 8 Templates & schema (JSON templates Shoulder/Scar, getTemplateForExamType per type, mergeTranscriptAndFramesIntoStructuredExam, Suggest button Session + Review, validateSessionPayload/validateStructuredExam); MVP phases complete.
 - 2025-02-17 — Phase 9 Start exam mode + Vision (exam mode overlay, auto-capture toggle 10s/20 cap, Web Speech nudge, batch OpenAI Vision at end, Generating report…, visionApi.js, visibility/autoCaptured schema); planned items from MEMORY + DESIGN_FEEDBACK implemented and tested (build pass).
 - 2025-02-17 — Session summarization with OpenAI: POST /api/vision/summarize-session, "Summarize with AI" on Transcript Review; transcript + frame descriptions → structured report sections (no invention of findings); build pass.
+- 2025-02-18 — Verify why cllc/creoq establishments do not appear at sign-in: root cause mockLogin overwrote establishments: [] on every login. Fixed: preserve establishments (and activeEstablishmentId) on same-email re-login; single-establishment redirect to dashboard. QA pass; next: optional PDF export or backend auth.

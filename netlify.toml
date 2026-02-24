@@ -1,6 +1,33 @@
+# Frontend + serverless API. Set OPENAI_API_KEY in Netlify env for transcription and vision.
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Rewrite /api/* to Netlify Functions (so frontend can call same origin; no VITE_API_BASE_URL needed).
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/transcribe"
+  to = "/.netlify/functions/transcribe"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/vision/describe-frames"
+  to = "/.netlify/functions/describe-frames"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/vision/summarize-session"
+  to = "/.netlify/functions/summarize-session"
+  status = 200
+  force = true

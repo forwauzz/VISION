@@ -30,7 +30,11 @@ export async function transcribeAudioChunk(audioBlob, timeOffsetSeconds = 0) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }))
     let message = err.error || 'Transcription failed'
-    if (res.status === 503 && err.code === 'NO_API_KEY') {
+    if (res.status === 404) {
+      message = 'Transcription API not available here. On Netlify the backend is not deployed—deploy it elsewhere and set VITE_API_BASE_URL, or run locally with: npm run server'
+    } else if (res.status === 413 || err.code === 'TOO_LARGE') {
+      message = 'Audio chunk too large (Netlify limit 6MB). Use shorter recording chunks or run the backend locally.'
+    } else if (res.status === 503 && err.code === 'NO_API_KEY') {
       message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'
     } else if (res.status === 502 || res.status === 500) {
       if (err.code === 'NO_API_KEY') message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'
@@ -75,7 +79,11 @@ export async function transcribeVideo(videoBlob) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }))
     let message = err.error || 'Transcription failed'
-    if (res.status === 503 && err.code === 'NO_API_KEY') {
+    if (res.status === 404) {
+      message = 'Transcription API not available here. On Netlify the backend is not deployed—deploy it elsewhere and set VITE_API_BASE_URL, or run locally with: npm run server'
+    } else if (res.status === 413 || err.code === 'TOO_LARGE') {
+      message = 'Audio chunk too large (Netlify limit 6MB). Use shorter recording chunks or run the backend locally.'
+    } else if (res.status === 503 && err.code === 'NO_API_KEY') {
       message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'
     } else if (res.status === 502 || res.status === 500) {
       if (err.code === 'NO_API_KEY') message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'

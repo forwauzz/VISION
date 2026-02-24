@@ -1,10 +1,9 @@
 /**
- * Vision Establishment Selector — establishments from auth (user-added; no mock data).
- * Empty state: Add your first establishment. Otherwise: grid + Add New Establishment (functional).
+ * Vision Establishment Selector — establishments from auth (existing only; no creation in UI).
+ * Empty state: No establishments assigned; contact administrator. Otherwise: grid of existing establishments.
  */
-import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { getAuth, setActiveEstablishment, addEstablishment } from '../lib/auth.js'
+import { getAuth, setActiveEstablishment } from '../lib/auth.js'
 
 const CARD_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80'
 
@@ -12,27 +11,6 @@ export default function EstablishmentSelector() {
   const navigate = useNavigate()
   const auth = getAuth()
   const establishments = auth?.establishments ?? []
-  const [showAddForm, setShowAddForm] = useState(establishments.length === 0)
-  const [addName, setAddName] = useState('')
-  const [addType, setAddType] = useState('')
-  const [addLocation, setAddLocation] = useState('')
-  const [addError, setAddError] = useState('')
-
-  function handleAddSubmit(e) {
-    e.preventDefault()
-    setAddError('')
-    const est = addEstablishment({ name: addName, type: addType || undefined, location: addLocation || undefined })
-    if (!est) {
-      setAddError('Name is required.')
-      return
-    }
-    setActiveEstablishment(est.id)
-    setAddName('')
-    setAddType('')
-    setAddLocation('')
-    setShowAddForm(false)
-    navigate('/dashboard')
-  }
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-white font-display overflow-x-hidden min-h-screen flex flex-col">
@@ -89,30 +67,11 @@ export default function EstablishmentSelector() {
             </div>
           </div>
 
-          {showAddForm ? (
-            <div className="w-full max-w-md mx-auto mt-8 p-6 bg-neutral-charcoal/40 border border-white/10 rounded-xl">
-              <h2 className="text-lg font-semibold text-white mb-4">{establishments.length === 0 ? 'Add your first establishment' : 'Add New Establishment'}</h2>
-              <form onSubmit={handleAddSubmit} className="space-y-4">
-                <div>
-                  <label htmlFor="est-name" className="block text-xs font-bold uppercase tracking-widest text-primary/80 mb-1">Name (required)</label>
-                  <input id="est-name" type="text" value={addName} onChange={(e) => setAddName(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg py-3 px-4 text-white text-sm focus:ring-1 focus:ring-primary/50" placeholder="Clinic or facility name" required autoFocus />
-                </div>
-                <div>
-                  <label htmlFor="est-type" className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Type (optional)</label>
-                  <input id="est-type" type="text" value={addType} onChange={(e) => setAddType(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg py-3 px-4 text-white text-sm focus:ring-1 focus:ring-primary/50" placeholder="e.g. Orthopedic clinic" />
-                </div>
-                <div>
-                  <label htmlFor="est-location" className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Location (optional)</label>
-                  <input id="est-location" type="text" value={addLocation} onChange={(e) => setAddLocation(e.target.value)} className="w-full bg-[#0a0a0a] border border-white/10 rounded-lg py-3 px-4 text-white text-sm focus:ring-1 focus:ring-primary/50" placeholder="Address or city" />
-                </div>
-                {addError && <p className="text-sm text-red-400">{addError}</p>}
-                <div className="flex gap-3 pt-2">
-                  <button type="submit" className="flex-1 py-3 rounded-lg bg-primary text-background-dark font-bold text-sm uppercase tracking-wider hover:bg-primary/90">Add & continue</button>
-                  {establishments.length > 0 && (
-                    <button type="button" onClick={() => { setShowAddForm(false); setAddError(''); }} className="px-4 py-3 rounded-lg border border-white/20 text-white/80 text-sm font-medium">Cancel</button>
-                  )}
-                </div>
-              </form>
+          {establishments.length === 0 ? (
+            <div className="w-full max-w-md mx-auto mt-8 p-8 bg-neutral-charcoal/40 border border-white/10 rounded-xl text-center">
+              <span className="material-symbols-outlined text-4xl text-white/30 mb-4 block">business</span>
+              <h2 className="text-lg font-semibold text-white mb-2">No establishments assigned</h2>
+              <p className="text-white/50 text-sm">You do not have access to any facility yet. Contact your administrator to be assigned to an establishment.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
@@ -168,13 +127,6 @@ export default function EstablishmentSelector() {
                   </div>
                 </div>
               ))}
-              <button type="button" onClick={() => setShowAddForm(true)} className="flex flex-col items-center justify-center bg-transparent border-2 border-dashed border-white/10 rounded-xl min-h-[280px] hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer group">
-                <div className="size-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <span className="material-symbols-outlined text-white/40 text-3xl group-hover:text-primary">add</span>
-                </div>
-                <p className="text-white/60 font-medium group-hover:text-white transition-colors">Add New Establishment</p>
-                <p className="text-white/30 text-xs mt-2 text-center px-8">Add a medical facility or clinic.</p>
-              </button>
             </div>
           )}
 

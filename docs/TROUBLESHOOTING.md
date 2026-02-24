@@ -1,5 +1,17 @@
 # Vision — Troubleshooting
 
+## Production / Netlify
+
+**Backend on Netlify:** The repo includes Netlify Functions in `netlify/functions/` that implement `/api/health`, `/api/transcribe`, `/api/vision/describe-frames`, and `/api/vision/summarize-session`. Redirects in `netlify.toml` rewrite these paths to the functions, so the frontend can call the same origin—no `VITE_API_BASE_URL` needed.
+
+**Required:** In Netlify → Site settings → Environment variables, set **OPENAI_API_KEY** (same key used for Whisper transcription and Vision/summarize). Redeploy after adding it.
+
+**Limits:** Netlify request body size is **6 MB**. Audio chunks larger than that (e.g. very long single chunks) will get 413; the app shows a friendly message. Normal 10s chunks are usually under 6 MB.
+
+**If you still see 404:** Ensure the latest code with `netlify/functions/` and the redirects in `netlify.toml` is deployed, and that the build completes (functions are built from that folder).
+
+---
+
 ## Audio capture and transcription
 
 **Flow:** Microphone → MediaRecorder (10s chunks) → `transcribeAudioChunk()` → POST `/api/transcribe` (proxy to backend) → Deepgram API → segments shown in Live Transcript.
