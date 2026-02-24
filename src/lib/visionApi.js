@@ -4,6 +4,8 @@
  * Client should send downscaled images (e.g. max 1024px) to reduce payload and cost.
  */
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || ''
+
 const MAX_FRAME_SIZE = 1024
 
 /**
@@ -39,7 +41,7 @@ export function downscaleFrameDataUrl(dataUrl) {
  * @returns {Promise<Array<{ frame_id: string, timestamp: string, linked_transcript_segment_id: string, visual_description: string, visibility?: string, dataUrl?: string, autoCaptured?: boolean }>>}
  */
 export async function describeFrames(payload) {
-  const { examType, audio_transcript = [], frames = [] } = payload
+  const { examType, bodyRegion = '', audio_transcript = [], frames = [] } = payload
   const framesWithImages = frames.filter((f) => f.dataUrl)
   const toSend = await Promise.all(
     framesWithImages.map(async (f) => ({
@@ -47,10 +49,10 @@ export async function describeFrames(payload) {
       dataUrl: await downscaleFrameDataUrl(f.dataUrl),
     }))
   )
-  const res = await fetch('/api/vision/describe-frames', {
+  const res = await fetch(`${API_BASE}/api/vision/describe-frames`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ examType, audio_transcript, frames: toSend }),
+    body: JSON.stringify({ examType, bodyRegion, audio_transcript, frames: toSend }),
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }))
@@ -72,7 +74,7 @@ export async function describeFrames(payload) {
  */
 export async function summarizeSession(payload) {
   const { examType, audio_transcript = [], frames = [], headings } = payload
-  const res = await fetch('/api/vision/summarize-session', {
+  const res = await fetch(`${API_BASE}/api/vision/summarize-session`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ examType, audio_transcript, frames, headings: headings || [] }),

@@ -6,8 +6,10 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { getSessionById, saveSessionPayload, updateSession } from '../lib/sessions.js'
 import GoldenVLoading from '../components/GoldenVLoading.jsx'
 import { getAuth } from '../lib/auth.js'
-import { transcribeAudioChunk } from '../lib/transcribe.js'
-import { getTemplateForExamType, mergeTranscriptAndFramesIntoStructuredExam, structuredExamToSingleText, singleTextToStructuredExam } from '../lib/examTemplates.js'
+import { transcribeAudioChunk, transcribeVideo } from '../lib/transcribe.js'
+import { extractFramesFromVideoBlob } from '../lib/videoFrameExtract.js'
+import * as recordingStorage from '../lib/recordingStorage.js'
+import { getTemplateForExamType, getEmptyExamForType, mergeTranscriptAndFramesIntoStructuredExam } from '../lib/examTemplates.js'
 import { describeFrames } from '../lib/visionApi.js'
 
 function formatDuration(seconds) {
@@ -29,9 +31,17 @@ export default function Session() {
   const sessionId = location.state?.sessionId || new URLSearchParams(location.search).get('sessionId')
   const session = location.state?.session ?? (sessionId ? getSessionById(sessionId) : null)
   const videoRef = useRef(null)
+  const replayVideoRef = useRef(null)
   const streamRef = useRef(null)
   const mediaRecorderRef = useRef(null)
+  const videoRecorderRef = useRef(null)
+  const videoChunksRef = useRef([])
+  const videoMimeTypeRef = useRef('')
+  const recordedVideoUrlRef = useRef(null)
+  const recordedBlobRef = useRef(null)
+  const videoBlobResolveRef = useRef(null)
   const elapsedRef = useRef(0)
+  const sessionStartTimeRef = useRef(null)
 
   const [transcriptSegments, setTranscriptSegments] = useState([])
   const [frames, setFrames] = useState([])
@@ -46,8 +56,14 @@ export default function Session() {
   const [examModeActive, setExamModeActive] = useState(false)
   const [autoCaptureEnabled, setAutoCaptureEnabled] = useState(false)
   const [generatingReport, setGeneratingReport] = useState(false)
+  const [isAnalyzingRecording, setIsAnalyzingRecording] = useState(false)
   const [visionError, setVisionError] = useState('')
   const [showExamPhaseNudge, setShowExamPhaseNudge] = useState(false)
+  const [recordedVideoUrl, setRecordedVideoUrl] = useState(null)
+  const [videoCapReached, setVideoCapReached] = useState(false)
+  const [videoSource, setVideoSource] = useState('live')
+  const [replayCurrentTime, setReplayCurrentTime] = useState(0)
+  const [replayDuration, setReplayDuration] = useState(0)
   const lastAutoCaptureRef = useRef(0)
   const autoCaptureIntervalRef = useRef(null)
   const framesCountRef = useRef(0)
@@ -66,7 +82,7 @@ export default function Session() {
       navigate('/dashboard', { replace: true })
       return
     }
-    setStructuredExam(getTemplateForExamType(session.examType))
+    setStructuredExam(getEmptyExamForType(session.examType))
     let stream = null
     const setup = async () => {
       try {
@@ -91,14 +107,27 @@ export default function Session() {
       if (videoRef.current) videoRef.current.srcObject = null
       mediaRecorderRef.current?.state !== 'inactive' && mediaRecorderRef.current?.stop()
       mediaRecorderRef.current = null
+      if (videoRecorderRef.current?.state !== 'inactive') videoRecorderRef.current?.stop()
+      videoRecorderRef.current = null
+      videoChunksRef.current = []
+      recordedBlobRef.current = null
+      if (recordedVideoUrlRef.current) {
+        URL.revokeObjectURL(recordedVideoUrlRef.current)
+        recordedVideoUrlRef.current = null
+      }
     }
   }, [session?.id, navigate])
 
   useEffect(() => {
     if (!isRecording || !startTime) return
     const tid = setInterval(() => {
-      setElapsedSeconds(Math.floor((Date.now() - startTime) / 1000))
-      elapsedRef.current = Math.floor((Date.now() - startTime) / 1000)
+      const elapsed = Math.floor((Date.now() - startTime) / 1000)
+      setElapsedSeconds(elapsed)
+      elapsedRef.current = elapsed
+      if (elapsed >= 300 && videoRecorderRef.current?.state === 'recording') {
+        setVideoCapReached(true)
+        videoRecorderRef.current.stop()
+      }
     }, 1000)
     return () => clearInterval(tid)
   }, [isRecording, startTime])
@@ -193,6 +222,56 @@ export default function Session() {
       setStartTime(Date.now())
       setElapsedSeconds(0)
       elapsedRef.current = 0
+      sessionStartTimeRef.current = Date.now()
+      recordedBlobRef.current = null
+      if (recordedVideoUrlRef.current) {
+        URL.revokeObjectURL(recordedVideoUrlRef.current)
+        recordedVideoUrlRef.current = null
+      }
+      setRecordedVideoUrl(null)
+      setVideoCapReached(false)
+      setVideoSource('live')
+      videoChunksRef.current = []
+
+      const videoMime = MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')
+        ? 'video/webm;codecs=vp8,opus'
+        : MediaRecorder.isTypeSupported('video/webm')
+          ? 'video/webm'
+          : ''
+      if (videoMime && stream.getVideoTracks().length > 0) {
+        try {
+          const videoRec = new MediaRecorder(stream, {
+            mimeType: videoMime,
+            videoBitsPerSecond: 2500000,
+            audioBitsPerSecond: 128000,
+          })
+          videoMimeTypeRef.current = videoMime
+          videoRec.ondataavailable = (e) => {
+            if (e.data.size > 0) videoChunksRef.current.push(e.data)
+          }
+          videoRec.onstop = () => {
+            if (videoChunksRef.current.length === 0) {
+              videoBlobResolveRef.current?.(null)
+              videoBlobResolveRef.current = null
+              return
+            }
+            const blob = new Blob(videoChunksRef.current, { type: videoMimeTypeRef.current })
+            recordedBlobRef.current = blob
+            const url = URL.createObjectURL(blob)
+            if (recordedVideoUrlRef.current) URL.revokeObjectURL(recordedVideoUrlRef.current)
+            recordedVideoUrlRef.current = url
+            setRecordedVideoUrl(url)
+            videoChunksRef.current = []
+            videoBlobResolveRef.current?.(blob)
+            videoBlobResolveRef.current = null
+          }
+          videoRec.start(10000)
+          videoRecorderRef.current = videoRec
+        } catch (err) {
+          console.warn('Video recorder not started', err)
+        }
+      }
+
       setIsRecording(true)
     } catch (e) {
       console.error('MediaRecorder start failed', e)
@@ -210,11 +289,32 @@ export default function Session() {
     if (mediaRecorderRef.current?.state === 'recording') {
       mediaRecorderRef.current.stop()
     }
+    const hadVideoRecorder = videoRecorderRef.current != null
+    if (videoRecorderRef.current?.state === 'recording') {
+      videoRecorderRef.current.stop()
+    }
+    videoRecorderRef.current = null
     setIsRecording(false)
+    if (!hadVideoRecorder) {
+      return Promise.resolve(null)
+    }
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        if (videoBlobResolveRef.current) {
+          videoBlobResolveRef.current = null
+          resolve(recordedBlobRef.current ?? null)
+        }
+      }, 5000)
+      videoBlobResolveRef.current = (blob) => {
+        clearTimeout(timeout)
+        videoBlobResolveRef.current = null
+        resolve(blob)
+      }
+    })
   }, [])
 
   const captureFrame = useCallback((isAuto = false) => {
-    const video = videoRef.current
+    const video = videoSource === 'recorded' ? replayVideoRef.current : videoRef.current
     if (!video || video.readyState < 2) return
     const canvas = document.createElement('canvas')
     canvas.width = video.videoWidth
@@ -223,12 +323,16 @@ export default function Session() {
     const dataUrl = canvas.toDataURL('image/jpeg', 0.85)
     const frameId = `frame-${Date.now()}`
     const linkedId = activeSegmentId || transcriptSegments[transcriptSegments.length - 1]?.segment_id || ''
+    const timestamp =
+      videoSource === 'recorded' && sessionStartTimeRef.current != null && video.currentTime != null
+        ? new Date(sessionStartTimeRef.current + video.currentTime * 1000).toISOString()
+        : new Date().toISOString()
     setFrames((prev) => {
       if (prev.length >= 20) return prev
-      return [...prev, { frame_id: frameId, timestamp: new Date().toISOString(), linked_transcript_segment_id: linkedId, visual_description: '', dataUrl, autoCaptured: isAuto }]
+      return [...prev, { frame_id: frameId, timestamp, linked_transcript_segment_id: linkedId, visual_description: '', dataUrl, autoCaptured: isAuto }]
     })
     if (isAuto) lastAutoCaptureRef.current = Date.now()
-  }, [activeSegmentId, transcriptSegments])
+  }, [activeSegmentId, transcriptSegments, videoSource])
 
   // Auto-capture: 1 frame per 10s when exam mode + auto-capture on, cap 20 (must be after captureFrame)
   useEffect(() => {
@@ -248,14 +352,55 @@ export default function Session() {
 
   const handleEndSession = useCallback(async () => {
     if (!session?.id) return
-    stopRecording()
     setVisionError('')
+    const blob = await stopRecording()
+
+    if (blob) {
+      setGeneratingReport(true)
+      setIsAnalyzingRecording(true)
+      try {
+        const audio_transcript = await transcribeVideo(blob)
+        const sessionStart = sessionStartTimeRef.current ?? Date.now()
+        const extractedFrames = await extractFramesFromVideoBlob(
+          blob,
+          { intervalSeconds: 10, maxFrames: 20 },
+          audio_transcript,
+          sessionStart
+        )
+        const payloadForVision = {
+          examType: session.examType,
+          bodyRegion: session.bodyRegion ?? '',
+          audio_transcript: audio_transcript.map((s) => ({ text: s.text, start_time: s.start_time, end_time: s.end_time, segment_id: s.segment_id })),
+          frames: extractedFrames.map((f) => ({ frame_id: f.frame_id, timestamp: f.timestamp, linked_transcript_segment_id: f.linked_transcript_segment_id, visual_description: f.visual_description || '', dataUrl: f.dataUrl, autoCaptured: f.autoCaptured })),
+        }
+        const updatedFrames = await describeFrames(payloadForVision)
+        const payload = {
+          audio_transcript: audio_transcript.map((s) => ({ text: s.text, start_time: s.start_time, end_time: s.end_time })),
+          frames: updatedFrames.map((f) => ({ frame_id: f.frame_id, timestamp: f.timestamp, linked_transcript_segment_id: f.linked_transcript_segment_id, visual_description: f.visual_description || '', visibility: f.visibility, autoCaptured: f.autoCaptured, dataUrl: f.dataUrl })),
+          structured_exam: mergeTranscriptAndFramesIntoStructuredExam(audio_transcript, updatedFrames, getTemplateForExamType(session.examType)),
+        }
+        saveSessionPayload(session.id, payload)
+        updateSession(session.id, { status: 'completed' })
+        if (recordingStorage.enabled()) {
+          await recordingStorage.save(session.id, blob)
+        }
+        navigate(`/review?sessionId=${encodeURIComponent(session.id)}`, { state: { sessionId: session.id } })
+      } catch (e) {
+        setVisionError(e.message || 'Analysis failed')
+      } finally {
+        setGeneratingReport(false)
+        setIsAnalyzingRecording(false)
+      }
+      return
+    }
+
     const needsVision = frames.length > 0 && frames.some((f) => !(f.visual_description || '').trim())
     if (needsVision) {
       setGeneratingReport(true)
       try {
         const payloadForVision = {
           examType: session.examType,
+          bodyRegion: session.bodyRegion ?? '',
           audio_transcript: transcriptSegments.map((s) => ({ text: s.text, start_time: s.start_time, end_time: s.end_time, segment_id: s.segment_id })),
           frames: frames.map((f) => ({ frame_id: f.frame_id, timestamp: f.timestamp, linked_transcript_segment_id: f.linked_transcript_segment_id, visual_description: f.visual_description || '', dataUrl: f.dataUrl, autoCaptured: f.autoCaptured })),
         }
@@ -309,8 +454,8 @@ export default function Session() {
       )}
       {generatingReport && (
         <GoldenVLoading
-          message="Generating report…"
-          subMessage="AI is describing key frames and building your structured report. This may take 10–15 seconds."
+          message={isAnalyzingRecording ? 'Analyzing recording…' : 'Generating report…'}
+          subMessage={isAnalyzingRecording ? 'Transcribing audio, extracting frames, and building your report. This may take 30–60 seconds.' : 'AI is describing key frames and building your structured report. This may take 10–15 seconds.'}
         />
       )}
       {isStartingRecording && (
@@ -411,7 +556,22 @@ export default function Session() {
                   </button>
                 </div>
               ) : null}
-              <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
+              {videoSource === 'recorded' && recordedVideoUrl ? (
+                <video
+                  ref={replayVideoRef}
+                  src={recordedVideoUrl}
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                  onTimeUpdate={() => setReplayCurrentTime(replayVideoRef.current?.currentTime ?? 0)}
+                  onLoadedMetadata={() => {
+                    const d = replayVideoRef.current?.duration
+                    if (d != null && !Number.isNaN(d)) setReplayDuration(d)
+                  }}
+                />
+              ) : (
+                <video ref={videoRef} autoPlay muted playsInline className="w-full h-full object-cover" />
+              )}
               <div className="absolute top-4 left-4 flex items-center gap-3">
                 {isRecording && (
                   <div className="flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-red-500/50">
@@ -419,13 +579,47 @@ export default function Session() {
                     <span className="text-[10px] font-bold tracking-widest text-white uppercase">REC</span>
                   </div>
                 )}
-                <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-white tracking-widest uppercase">Live</div>
+                {recordedVideoUrl ? (
+                  <div className="flex rounded-full border border-white/10 overflow-hidden bg-black/60 backdrop-blur-md">
+                    <button type="button" onClick={() => setVideoSource('live')} className={`px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase ${videoSource === 'live' ? 'bg-primary text-charcoal-darker' : 'text-white/70 hover:text-white'}`}>Live</button>
+                    <button type="button" onClick={() => setVideoSource('recorded')} className={`px-3 py-1.5 text-[10px] font-bold tracking-widest uppercase ${videoSource === 'recorded' ? 'bg-primary text-charcoal-darker' : 'text-white/70 hover:text-white'}`}>Recorded</button>
+                  </div>
+                ) : (
+                  <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 text-[10px] font-bold text-white tracking-widest uppercase">Live</div>
+                )}
               </div>
               <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10">
                 <span className="text-xs font-mono font-bold text-primary">{formatDuration(elapsedSeconds)}</span>
               </div>
             </div>
+            {videoSource === 'recorded' && recordedVideoUrl && (
+              <div className="flex items-center gap-3 mt-2 px-1">
+                <input
+                  type="range"
+                  min={0}
+                  max={replayDuration || 1}
+                  step={0.1}
+                  value={replayCurrentTime}
+                  onChange={(e) => {
+                    const t = Number(e.target.value)
+                    if (replayVideoRef.current) replayVideoRef.current.currentTime = t
+                    setReplayCurrentTime(t)
+                  }}
+                  className="flex-1 h-2 rounded-full appearance-none bg-white/10 accent-primary"
+                  aria-label="Scrub recorded video"
+                />
+                <span className="text-xs font-mono text-white/80 tabular-nums shrink-0">
+                  {formatDuration(Math.floor(replayCurrentTime))} / {formatDuration(Math.floor(replayDuration))}
+                </span>
+              </div>
+            )}
           </div>
+          {videoCapReached && (
+            <p className="text-sm text-primary/90 bg-primary/10 border border-primary/30 rounded-lg px-4 py-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-lg" aria-hidden>info</span>
+              Video recording stopped at 5 min. You can recapture from the recorded video below.
+            </p>
+          )}
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-primary/80">Key Frames ({frames.length}/20)</h3>
@@ -468,13 +662,19 @@ export default function Session() {
               Suggest from transcript & frames
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
-            <textarea
-              className="w-full min-h-[280px] text-sm font-light text-white/90 bg-white/5 p-3 rounded border border-white/10 focus:ring-1 focus:ring-primary/50 focus:border-primary/50 resize-y"
-              value={structuredExamToSingleText(structuredExam, getTemplateForExamType(session?.examType))}
-              onChange={(e) => setStructuredExam(singleTextToStructuredExam(e.target.value, getTemplateForExamType(session?.examType), structuredExam))}
-              placeholder="Use ## Section name then content for each section."
-            />
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
+            {Object.keys(getTemplateForExamType(session?.examType)).map((heading) => (
+              <div key={heading} className="border-b border-white/5 pb-4 last:border-b-0 last:pb-0">
+                <p className="text-[9px] font-black uppercase tracking-widest text-primary/60 mb-1.5">{heading}</p>
+                <textarea
+                  className="w-full text-sm font-light text-white/80 bg-transparent resize-none outline-none border-none focus:ring-0 leading-relaxed placeholder:text-white/20 min-h-[2.5rem]"
+                  value={structuredExam[heading] || ''}
+                  rows={2}
+                  onChange={(e) => setStructuredExam((prev) => ({ ...prev, [heading]: e.target.value }))}
+                  placeholder="—"
+                />
+              </div>
+            ))}
           </div>
         </aside>
       </main>
@@ -495,7 +695,7 @@ export default function Session() {
           </div>
         </div>
         <div className="flex items-center gap-2 justify-center flex-wrap">
-          <button type="button" disabled={!isRecording || !examModeActive} onClick={() => captureFrame(false)} className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-charcoal-darker transition-all duration-300 text-[10px] font-extrabold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed" aria-label="Capture frame">
+          <button type="button" disabled={(!isRecording || !examModeActive) && !(recordedVideoUrl && videoSource === 'recorded')} onClick={() => captureFrame(false)} className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-charcoal-darker transition-all duration-300 text-[10px] font-extrabold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed" aria-label="Capture frame">
             <span className="material-symbols-outlined text-lg select-none" aria-hidden>photo_camera</span>
             Capture Frame
           </button>

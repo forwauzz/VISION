@@ -9,4 +9,8 @@ export default defineConfig({
     port: 5177,
     proxy: { '/api': { target: 'http://localhost:3009', changeOrigin: true } },
   },
+  test: {
+    globals: true,
+    environment: 'node',
+  },
 })

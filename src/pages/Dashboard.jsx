@@ -4,7 +4,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getAuth, clearAuth } from '../lib/auth.js'
+import { getAuth, clearAuth, setActiveEstablishment } from '../lib/auth.js'
 import { getSessionsByEstablishment, createSessionStub } from '../lib/sessions.js'
 import GoldenVLoading from '../components/GoldenVLoading.jsx'
 
@@ -31,24 +31,29 @@ function sessionToDisplay(stub) {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const auth = getAuth()
+  const [auth, setAuth] = useState(getAuth)
   const activeEst = auth?.establishments?.find((e) => e.id === auth?.activeEstablishmentId)
   const establishmentName = activeEst?.name ?? 'Select establishment'
   const displayName = auth?.displayName ?? 'User'
   const [showExamModal, setShowExamModal] = useState(false)
+  const [bodyRegion, setBodyRegion] = useState('')
   const [isStartingSession, setIsStartingSession] = useState(false)
 
   const sessions = (auth?.activeEstablishmentId ? getSessionsByEstablishment(auth.activeEstablishmentId) : []).map(sessionToDisplay).slice(0, 10)
 
   useEffect(() => {
+    setAuth(getAuth())
+  }, [])
+
+  useEffect(() => {
     if (auth?.establishments?.length === 0) {
-      navigate('/establishment-selector', { replace: true })
-      return
-    }
-    if (auth?.establishments?.length > 1 && !auth?.activeEstablishmentId) {
       navigate('/establishment-selector', { replace: true })
     }
   }, [auth?.establishments?.length, auth?.activeEstablishmentId, navigate])
+
+  function handleSwitchEstablishment(establishmentId) {
+    if (setActiveEstablishment(establishmentId)) setAuth(getAuth())
+  }
 
   function handleLogout() {
     clearAuth()
@@ -63,8 +68,10 @@ export default function Dashboard() {
     if (!auth?.userId || !auth?.activeEstablishmentId) return
     setShowExamModal(false)
     setIsStartingSession(true)
+    const region = bodyRegion.trim()
+    setBodyRegion('')
     setTimeout(() => {
-      const session = createSessionStub({ userId: auth.userId, establishmentId: auth.activeEstablishmentId, examType })
+      const session = createSessionStub({ userId: auth.userId, establishmentId: auth.activeEstablishmentId, examType, bodyRegion: region })
       if (session) navigate(`/session?sessionId=${encodeURIComponent(session.id)}`, { state: { session } })
       setIsStartingSession(false)
     }, 400)
@@ -142,6 +149,32 @@ export default function Dashboard() {
           <p className="mt-8 text-slate-500 max-w-md text-sm leading-relaxed">
             Start a real-time analysis session for <span className="text-slate-300 font-medium italic">{establishmentName}</span>. All data is encrypted and logged.
           </p>
+
+          {auth?.establishments?.length > 0 && (
+            <div className="mt-10 flex flex-col items-center gap-3">
+              <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">Your establishments</span>
+              <div className="flex flex-wrap justify-center gap-2">
+                {auth.establishments.map((est) => (
+                  <button
+                    key={est.id}
+                    type="button"
+                    onClick={() => handleSwitchEstablishment(est.id)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${
+                      est.id === auth?.activeEstablishmentId
+                        ? 'bg-primary/20 border-primary text-primary'
+                        : 'bg-surface-dark border-border-dark text-slate-400 hover:border-primary/50 hover:text-slate-300'
+                    }`}
+                  >
+                    {est.name}
+                    {est.primary && <span className="ml-1.5 text-[10px] uppercase text-primary">Primary</span>}
+                  </button>
+                ))}
+              </div>
+              <Link to="/establishment-selector" className="text-slate-500 hover:text-primary text-xs font-medium transition-colors">
+                Manage all establishments →
+              </Link>
+            </div>
+          )}
         </section>
 
         <section className="max-w-4xl mx-auto">
@@ -207,6 +240,19 @@ export default function Dashboard() {
           <div className="bg-surface-dark border border-border-gold rounded-2xl p-8 max-w-md w-full mx-4 gold-glow">
             <h2 id="exam-modal-title" className="text-xl font-bold text-white mb-2">Select exam type</h2>
             <p className="text-slate-400 text-sm mb-6">Choose the type of exam for this session.</p>
+            <div className="mb-5">
+              <label htmlFor="body-region" className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">
+                Body region <span className="text-slate-600 font-normal normal-case tracking-normal">(optional)</span>
+              </label>
+              <input
+                id="body-region"
+                type="text"
+                value={bodyRegion}
+                onChange={(e) => setBodyRegion(e.target.value)}
+                placeholder="e.g. left knee, right shoulder, lower leg"
+                className="w-full bg-background-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/30"
+              />
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 flex-wrap">
               <button type="button" onClick={() => handleChooseExamType('Shoulder')} className="flex-1 min-w-[120px] flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary/10 border border-primary/30 hover:bg-primary/20 hover:border-primary/50 text-white font-semibold transition-all">
                 <span className="material-symbols-outlined text-primary">elderly</span>
@@ -221,7 +267,7 @@ export default function Dashboard() {
                 Orthopedic
               </button>
             </div>
-            <button type="button" onClick={() => setShowExamModal(false)} className="mt-6 w-full py-2 text-slate-400 hover:text-white text-sm transition-colors">
+            <button type="button" onClick={() => { setShowExamModal(false); setBodyRegion('') }} className="mt-6 w-full py-2 text-slate-400 hover:text-white text-sm transition-colors">
               Cancel
             </button>
           </div>

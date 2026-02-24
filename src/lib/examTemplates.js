@@ -28,7 +28,30 @@ export function getEmptyStructuredExam() {
 }
 
 /**
+ * Returns an empty structured_exam for the given exam type — headings present, all values blank.
+ * Use this to initialize the report UI before any content is generated.
+ * @param {'Shoulder' | 'Scar' | 'Orthopedic'} examType
+ * @returns {import('./sessionStorageSchema.js').StructuredExam}
+ */
+export function getEmptyExamForType(examType) {
+  const t = TEMPLATES[examType]
+  const headings = t?.headings ?? DEFAULT_HEADINGS
+  return headings.reduce((acc, h) => ({ ...acc, [h]: '' }), {})
+}
+
+// Sections filled from transcript speech (clinician/patient verbal findings)
+const TRANSCRIPT_SECTIONS = new Set(['Palpation', 'Strength', 'Special Tests', 'Neurovascular'])
+// Sections filled from frame visual descriptions (visual-only findings)
+const VISUAL_SECTIONS = new Set(['Swelling/Effusion', 'Swelling', 'Skin/Scarring', 'Scarring'])
+// Sections that prefer frames but fall back to transcript (ROM, Inspection = hybrid)
+
+/**
  * Merge transcript and frames into structured_exam per PRD §5.6. Uses "Not visually assessable" when no content.
+ * Section source logic:
+ *   TRANSCRIPT_SECTIONS → transcriptText || placeholder
+ *   VISUAL_SECTIONS     → frameDescriptions || placeholder
+ *   Inspection          → transcriptText || frameDescriptions || placeholder
+ *   Hybrid (ROM, etc.)  → frameDescriptions || transcriptText || placeholder
  * @param {{ text: string }[]} transcript
  * @param {{ visual_description?: string }[]} frames
  * @param {import('./sessionStorageSchema.js').StructuredExam} template empty or placeholder object (headings only)
@@ -42,10 +65,16 @@ export function mergeTranscriptAndFramesIntoStructuredExam(transcript, frames, t
 
   const result = {}
   for (const h of headings) {
+    const placeholder = template[h] || notAssessable
     if (h === 'Inspection') {
-      result[h] = transcriptText || template[h] || ''
+      result[h] = transcriptText || frameDescriptions || placeholder
+    } else if (TRANSCRIPT_SECTIONS.has(h)) {
+      result[h] = transcriptText || placeholder
+    } else if (VISUAL_SECTIONS.has(h)) {
+      result[h] = frameDescriptions || placeholder
     } else {
-      result[h] = frameDescriptions || template[h] || notAssessable
+      // Hybrid (ROM sections, Passive ROM, etc.): prefer frames, fall back to transcript
+      result[h] = frameDescriptions || transcriptText || placeholder
     }
   }
   return result

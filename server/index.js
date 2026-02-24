@@ -8,7 +8,6 @@ import cors from 'cors'
 
 const app = express()
 const PORT = Number(process.env.TRANSCRIPTION_PORT) || 3009
-const DEEPGRAM_KEY = process.env.DEEPGRAM_API_KEY
 const OPENAI_KEY = process.env.OPENAI_API_KEY
 
 const MAX_VISION_FRAMES = 20
@@ -18,11 +17,19 @@ app.use(cors({ origin: true }))
 app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'vision-api' }))
 
 // Vision: JSON body. Transcribe: raw body (see route below).
+function buildBodyContext(examType, bodyRegion) {
+  const base = examType === 'Shoulder' ? 'Orthopedic shoulder exam'
+    : examType === 'Scar' ? 'Scar / wound assessment'
+    : examType === 'Orthopedic' ? 'Orthopedic physical exam'
+    : `${examType} exam`
+  return bodyRegion ? `${base} – ${bodyRegion}` : base
+}
+
 app.post('/api/vision/describe-frames', express.json({ limit: '20mb' }), async (req, res) => {
   if (!OPENAI_KEY) {
     return res.status(503).json({ error: 'Vision not configured (missing OPENAI_API_KEY)' })
   }
-  const { examType, audio_transcript = [], frames = [] } = req.body || {}
+  const { examType, audio_transcript = [], frames = [], bodyRegion = '' } = req.body || {}
   if (!examType || !Array.isArray(frames) || frames.length === 0) {
     return res.status(400).json({ error: 'Missing examType or frames' })
   }
@@ -37,8 +44,22 @@ app.post('/api/vision/describe-frames', express.json({ limit: '20mb' }), async (
     return acc
   }, {})
 
-  const bodyContext = examType === 'Shoulder' ? 'Orthopedic shoulder exam' : examType === 'Scar' ? 'Scar / wound assessment' : examType === 'Orthopedic' ? 'Orthopedic physical exam' : `${examType} exam`
-  const systemPrompt = `You assist with documentation of visual findings for medico-legal purposes. Only describe what is directly visible. Do not diagnose, infer cause, or prognosis. Use neutral, objective language. No speculation. If image quality is insufficient, respond with visibility "not_assessable" and visual_description "Image insufficient for clinical description." Forbidden: measurements, severity grading unless visually obvious, "likely", "consistent with", "suggestive of". Do not use hashtags, markdown, or bullet symbols in visual_description. Use clean, professional prose only (plain sentences). Respond with valid JSON only: {"frame_id":"...","visual_description":"1-3 sentences, max 200 chars","visibility":"ok"|"obscured"|"not_assessable"}.`
+  const bodyContext = buildBodyContext(examType, bodyRegion)
+  const systemPrompt = `You are assisting with documentation of physical examination findings for medico-legal orthopedic and surgical records.
+
+OBSERVATION GUIDELINES:
+- If a patient is moving a limb, estimate and describe the range of motion in degrees (e.g., "shoulder flexion to approximately 90°", "knee flexion to approximately 110°")
+- Describe movement quality: smooth, guarded, antalgic, asymmetric, restricted
+- Note visible signs: swelling (localized/diffuse), muscle atrophy, deformity (valgus/varus/angular/rotational), surgical scars, skin changes
+- Describe patient posture and weight-bearing if visible
+- If a clinician is performing a test, describe the patient's position and visible response
+
+STRICT RULES:
+- Only describe what is directly visible in the image. Do not diagnose or infer cause.
+- Forbidden: "likely", "consistent with", "suggestive of", severity grading, measurements not visible
+- No markdown, hashtags, or bullet points. Plain sentences only.
+- If image quality is insufficient: visibility "not_assessable", description "Image insufficient for clinical description."
+- Respond with valid JSON only: {"frame_id":"...","visual_description":"1-3 sentences, max 250 chars","visibility":"ok"|"obscured"|"not_assessable"}`
 
   function cleanDescription(text) {
     if (!text || typeof text !== 'string') return ''
@@ -53,7 +74,7 @@ app.post('/api/vision/describe-frames', express.json({ limit: '20mb' }), async (
   const results = await Promise.all(
     toProcess.map(async (frame) => {
       const transcriptExcerpt = transcriptBySegmentId[frame.linked_transcript_segment_id] || '(no transcript excerpt)'
-      const userPrompt = `Exam context: ${bodyContext}. Transcript excerpt for this moment: "${transcriptExcerpt}". Describe only what is visible in this image. Respond with JSON: {"frame_id":"${frame.frame_id}","visual_description":"...","visibility":"ok"|"obscured"|"not_assessable"}.`
+      const userPrompt = `Exam context: ${bodyContext}.\nTranscript at this moment: "${transcriptExcerpt}".\n\nUsing physical examination terminology appropriate for this exam, describe what you observe.\nIf the patient is demonstrating range of motion, estimate the degrees visible.\nDescribe posture, movement quality, visible anatomical findings, and any observable clinical signs.\nRespond with JSON: {"frame_id":"${frame.frame_id}","visual_description":"...","visibility":"ok"|"obscured"|"not_assessable"}.`
       const imagePart = frame.dataUrl.startsWith('data:') ? frame.dataUrl : `data:image/jpeg;base64,${frame.dataUrl}`
       try {
         const oaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -103,13 +124,13 @@ app.post('/api/vision/summarize-session', express.json({ limit: '2mb' }), async 
   if (!OPENAI_KEY) {
     return res.status(503).json({ error: 'Summarization not configured (missing OPENAI_API_KEY)' })
   }
-  const { examType, audio_transcript = [], frames = [] } = req.body || {}
+  const { examType, audio_transcript = [], frames = [], bodyRegion = '' } = req.body || {}
   if (!examType) {
     return res.status(400).json({ error: 'Missing examType' })
   }
   const transcriptText = (audio_transcript || []).map((s) => s.text || '').filter(Boolean).join(' ').trim()
   const frameDescriptions = (frames || []).map((f) => f.visual_description || '').filter(Boolean).join('\n')
-  const bodyContext = examType === 'Shoulder' ? 'Orthopedic shoulder exam' : examType === 'Scar' ? 'Scar / wound assessment' : examType === 'Orthopedic' ? 'Orthopedic physical exam' : `${examType} exam`
+  const bodyContext = buildBodyContext(examType, bodyRegion)
   const headings = Array.isArray(req.body.headings) && req.body.headings.length > 0 ? req.body.headings : ['Inspection', 'Active Range of Motion', 'Swelling', 'Scarring']
   const keysList = headings.map((h) => `"${h}"`).join(', ')
   const systemPrompt = `You assist with documentation for medico-legal purposes. Using only the transcript and frame descriptions provided, generate structured report sections. Do not diagnose, infer cause, or prognosis. Do not invent findings not supported by the transcript or descriptions. Use neutral, objective language. Output valid JSON only with keys: ${keysList}. Each value is a string (1–4 sentences). Use "Not visually assessable" where there is no relevant content.`
@@ -150,62 +171,61 @@ app.post('/api/vision/summarize-session', express.json({ limit: '2mb' }), async 
 })
 
 app.post('/api/transcribe', express.raw({ type: () => true, limit: '50mb' }), async (req, res) => {
-  if (!DEEPGRAM_KEY) {
-    return res.status(503).json({ error: 'Transcription not configured (missing DEEPGRAM_API_KEY)' })
+  if (!OPENAI_KEY) {
+    return res.status(503).json({ error: 'Transcription not configured (missing OPENAI_API_KEY)', code: 'NO_API_KEY' })
   }
-  if (!req.body || req.body.length === 0) {
+  let body = null
+  try {
+    body = Buffer.isBuffer(req.body) ? req.body : (req.body ? Buffer.from(req.body) : null)
+  } catch (bodyErr) {
+    console.error('[transcribe] Invalid request body', bodyErr.message)
+    return res.status(400).json({ error: 'Invalid request body', code: 'BAD_BODY' })
+  }
+  if (!body || body.length === 0) {
     return res.json({ segments: [] })
   }
-  const contentType = req.headers['content-type'] || 'audio/webm'
+  const contentType = (req.headers['content-type'] || '').split(';')[0].trim() || 'audio/webm'
   try {
-    const dgRes = await fetch('https://api.deepgram.com/v1/listen?model=nova-2&smart_format=true&punctuate=true', {
+    const ext = contentType.includes('mp4') ? 'mp4' : contentType.includes('wav') ? 'wav' : 'webm'
+    const formData = new FormData()
+    formData.append('file', new Blob([body], { type: contentType }), `audio.${ext}`)
+    formData.append('model', 'whisper-1')
+    formData.append('response_format', 'verbose_json')
+    const whisperRes = await fetch('https://api.openai.com/v1/audio/transcriptions', {
       method: 'POST',
-      headers: {
-        Authorization: `Token ${DEEPGRAM_KEY}`,
-        'Content-Type': contentType,
-      },
-      body: req.body,
+      headers: { Authorization: `Bearer ${OPENAI_KEY}` },
+      body: formData,
     })
-    if (!dgRes.ok) {
-      const errText = await dgRes.text()
-      console.warn('[transcribe] Deepgram error', dgRes.status, errText.slice(0, 200))
-      if (dgRes.status >= 400 && dgRes.status < 500) {
+    const resText = await whisperRes.text()
+    if (!whisperRes.ok) {
+      console.warn('[transcribe] Whisper error', whisperRes.status, resText.slice(0, 300))
+      if (whisperRes.status >= 400 && whisperRes.status < 500) {
         return res.json({ segments: [] })
       }
-      return res.status(dgRes.status).json({ error: 'Transcription failed', details: errText })
+      return res.status(502).json({ error: 'Transcription failed', details: resText.slice(0, 500), code: 'WHISPER_ERROR' })
     }
-    const data = await dgRes.json()
-    const channel = data?.results?.channels?.[0]
-    const alternative = channel?.alternatives?.[0]
-    const words = alternative?.words ?? []
-    // Group words into sentence-like segments (end on . ! ? or after many words) for readable display
-    const segments = []
-    let current = { text: [], start_time: null, end_time: null }
-    const flush = () => {
-      if (current.text.length === 0) return
-      segments.push({
-        text: current.text.join(' ').replace(/\s+/g, ' ').trim(),
-        start_time: current.start_time,
-        end_time: current.end_time,
-      })
-      current = { text: [], start_time: null, end_time: null }
+    let data
+    try {
+      data = JSON.parse(resText)
+    } catch (parseErr) {
+      console.error('[transcribe] Whisper response not JSON', parseErr.message)
+      return res.status(502).json({ error: 'Invalid response from transcription service', details: parseErr.message, code: 'INVALID_RESPONSE' })
     }
-    for (const w of words) {
-      const text = (w.punctuated_word ?? w.word ?? '').trim()
-      if (!text) continue
-      if (current.start_time == null) current.start_time = w.start ?? 0
-      current.end_time = w.end ?? current.end_time
-      current.text.push(text)
-      const endsSentence = /[.!?]$/.test(text)
-      if (endsSentence || current.text.length >= 12) flush()
-    }
-    flush()
+    const whisperSegments = data?.segments ?? []
+    const segments = whisperSegments
+      .map(s => ({ text: (s.text || '').trim(), start_time: s.start ?? 0, end_time: s.end ?? 0 }))
+      .filter(s => s.text)
     res.json({ segments })
   } catch (e) {
-    res.status(500).json({ error: 'Transcription error', details: e.message })
+    console.error('[transcribe] Error', e.message)
+    res.status(500).json({ error: 'Transcription error', details: e.message, code: 'SERVER_ERROR' })
   }
 })
 
-app.listen(PORT, () => {
-  console.log(`Vision transcription proxy on http://localhost:${PORT}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Vision transcription proxy on http://localhost:${PORT}`)
+  })
+}
+
+export { app }

@@ -1,8 +1,29 @@
 /**
  * Vision MVP — Auth lib (Phase 4). Simulated login only; read/write auth state to localStorage.
- * No mock data: establishments are empty after login; user adds them via Add Establishment (functional).
+ * First-time login gets bot (seed) establishments; re-login preserves user-added list.
  */
 import { AUTH_STORAGE_KEY } from './authStorageSchema.js'
+
+/** Demo establishments for first-time users so selector/dashboard are usable without manual add. */
+const BOT_ESTABLISHMENTS = [
+  {
+    id: 'est-bot-cllc',
+    name: 'Canadian Limb Lengthening Center',
+    type: 'Orthopedic Clinic',
+    location: 'Mont-Royal, QC',
+    logo: 'https://cllcenter.com/wp-content/uploads/2022/05/cllc.png',
+    url: 'https://cllcenter.com/',
+    primary: true,
+  },
+  {
+    id: 'est-bot-creoq',
+    name: 'CREOQ',
+    type: 'Ambulatory Surgery Centre',
+    location: 'Mont-Royal, QC',
+    logo: 'https://creoq.com/wp-content/uploads/2024/01/creoq.png',
+    url: 'https://creoq.com/',
+  },
+]
 
 function read() {
   try {
@@ -41,6 +62,7 @@ export function getAuth() {
 
 /**
  * Simulated login: accept any non-empty email/password; store user. Establishments list starts empty (user adds via UI).
+ * On re-login with the same email, preserves existing establishments so they appear at establishment-selector.
  * @returns {{ ok: true, redirect: 'dashboard' | 'establishment-selector' } | { ok: false, error: string }}
  */
 export function mockLogin(email, password) {
@@ -48,16 +70,26 @@ export function mockLogin(email, password) {
   const p = (password || '').trim()
   if (!e || !p) return { ok: false, error: 'Email and password required' }
 
+  const existing = read()
+  const sameUser = existing && existing.email && existing.email.toLowerCase() === e.toLowerCase()
+  const preservedEstablishments = sameUser && Array.isArray(existing.establishments) ? existing.establishments : []
+  const establishments = preservedEstablishments.length > 0 ? preservedEstablishments : BOT_ESTABLISHMENTS
+  const primaryId = establishments.find((e) => e.primary)?.id ?? establishments[0]?.id ?? null
+  const preservedActiveId = sameUser && preservedEstablishments.length > 0
+    ? (existing.activeEstablishmentId ?? primaryId)
+    : primaryId
+
   const displayName = e.includes('@') ? e.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) : 'User'
   const state = {
-    userId: `user-${Date.now()}`,
+    userId: existing?.userId ?? `user-${Date.now()}`,
     email: e,
     displayName,
-    establishments: [],
-    activeEstablishmentId: null,
+    establishments,
+    activeEstablishmentId: preservedActiveId,
   }
   if (!write(state)) return { ok: false, error: 'Failed to save session' }
-  return { ok: true, redirect: 'establishment-selector' }
+  const redirect = 'dashboard'
+  return { ok: true, redirect }
 }
 
 /**

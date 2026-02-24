@@ -1,15 +1,18 @@
 /**
  * Vision Transcript Review & Merge — loads session by sessionId, shows real transcript/frames/report.
  * Transcript–frame sync: click segment → scroll to linked frame; click frame → highlight segment.
- * Export JSON; Finalize saves edits and navigates to dashboard.
+ * When recording storage is enabled, shows Recording section and Re-run analysis per case.
  */
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { getSessionById, saveSessionPayload } from '../lib/sessions.js'
 import GoldenVLoading from '../components/GoldenVLoading.jsx'
-import { mergeTranscriptAndFramesIntoStructuredExam, getTemplateForExamType, structuredExamToSingleText, singleTextToStructuredExam } from '../lib/examTemplates.js'
+import { mergeTranscriptAndFramesIntoStructuredExam, getTemplateForExamType } from '../lib/examTemplates.js'
 import { validateSessionPayload } from '../lib/validateSession.js'
-import { summarizeSession } from '../lib/visionApi.js'
+import { summarizeSession, describeFrames } from '../lib/visionApi.js'
+import * as recordingStorage from '../lib/recordingStorage.js'
+import { transcribeVideo } from '../lib/transcribe.js'
+import { extractFramesFromVideoBlob } from '../lib/videoFrameExtract.js'
 
 function formatSegmentTime(seconds) {
   const m = Math.floor(seconds / 60)
@@ -29,6 +32,10 @@ export default function TranscriptReview() {
   const [activeSegmentId, setActiveSegmentId] = useState(null)
   const [summarizing, setSummarizing] = useState(false)
   const [summarizeError, setSummarizeError] = useState('')
+  const [hasRecording, setHasRecording] = useState(false)
+  const [recordingUrl, setRecordingUrl] = useState(null)
+  const [reRunningAnalysis, setReRunningAnalysis] = useState(false)
+  const [reRunError, setReRunError] = useState('')
   const frameRefsMap = useRef({})
 
   useEffect(() => {
@@ -49,6 +56,20 @@ export default function TranscriptReview() {
     setLocalFrames(loaded.frames ? [...loaded.frames] : [])
     setStructuredExam(loaded.structured_exam ? { ...loaded.structured_exam } : {})
   }, [sessionId, navigate])
+
+  useEffect(() => {
+    if (!recordingStorage.enabled() || !sessionId) {
+      setHasRecording(false)
+      return
+    }
+    recordingStorage.has(sessionId).then(setHasRecording)
+  }, [sessionId])
+
+  useEffect(() => {
+    return () => {
+      if (recordingUrl) URL.revokeObjectURL(recordingUrl)
+    }
+  }, [recordingUrl])
 
   const frames = localFrames
   const totalDuration = transcript.length > 0
@@ -122,6 +143,61 @@ export default function TranscriptReview() {
     setLocalFrames((prev) => prev.map((f) => (f.frame_id === frameId ? { ...f, visual_description: value } : f)))
   }
 
+  const handleOpenRecording = useCallback(async () => {
+    if (!sessionId) return
+    const blob = await recordingStorage.get(sessionId)
+    if (!blob) return
+    setRecordingUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev)
+      return URL.createObjectURL(blob)
+    })
+    setReRunError('')
+  }, [sessionId])
+
+  const handleReRunAnalysis = useCallback(async () => {
+    if (!sessionId || !session?.examType) return
+    setReRunError('')
+    setReRunningAnalysis(true)
+    try {
+      const blob = await recordingStorage.get(sessionId)
+      if (!blob) {
+        setReRunError('No recording found for this session.')
+        return
+      }
+      const audio_transcript = await transcribeVideo(blob)
+      const sessionStartMs = session.startedAt ? new Date(session.startedAt).getTime() : Date.now()
+      const extractedFrames = await extractFramesFromVideoBlob(
+        blob,
+        { intervalSeconds: 10, maxFrames: 20 },
+        audio_transcript,
+        sessionStartMs
+      )
+      const payloadForVision = {
+        examType: session.examType,
+        audio_transcript: audio_transcript.map((s) => ({ text: s.text, start_time: s.start_time, end_time: s.end_time, segment_id: s.segment_id })),
+        frames: extractedFrames.map((f) => ({ frame_id: f.frame_id, timestamp: f.timestamp, linked_transcript_segment_id: f.linked_transcript_segment_id, visual_description: f.visual_description || '', dataUrl: f.dataUrl, autoCaptured: f.autoCaptured })),
+      }
+      const updatedFrames = await describeFrames(payloadForVision)
+      const payload = {
+        audio_transcript: audio_transcript.map((s) => ({ text: s.text, start_time: s.start_time, end_time: s.end_time })),
+        frames: updatedFrames.map((f) => ({ frame_id: f.frame_id, timestamp: f.timestamp, linked_transcript_segment_id: f.linked_transcript_segment_id, visual_description: f.visual_description || '', visibility: f.visibility, autoCaptured: f.autoCaptured, dataUrl: f.dataUrl })),
+        structured_exam: mergeTranscriptAndFramesIntoStructuredExam(audio_transcript, updatedFrames, getTemplateForExamType(session.examType)),
+      }
+      saveSessionPayload(sessionId, payload)
+      const segments = (payload.audio_transcript ?? []).map((s, i) => ({
+        ...s,
+        segment_id: s.segment_id ?? `seg-review-${i}`,
+      }))
+      setTranscript(segments)
+      setLocalFrames(payload.frames ? [...payload.frames] : [])
+      setStructuredExam(payload.structured_exam ? { ...payload.structured_exam } : {})
+    } catch (e) {
+      setReRunError(e.message || 'Re-run analysis failed')
+    } finally {
+      setReRunningAnalysis(false)
+    }
+  }, [sessionId, session?.examType, session?.startedAt])
+
   function handleMergeIntoReport(frame) {
     const template = getTemplateForExamType(session?.examType)
     const headings = Object.keys(template || {})
@@ -143,6 +219,12 @@ export default function TranscriptReview() {
         <GoldenVLoading
           message="Summarizing with AI…"
           subMessage="Building structured report from transcript and key frames. This may take a few seconds."
+        />
+      )}
+      {reRunningAnalysis && (
+        <GoldenVLoading
+          message="Re-running analysis…"
+          subMessage="Transcribing recording, extracting frames, and describing. This may take 30–60 seconds."
         />
       )}
       <header className="flex h-16 items-center justify-between border-b border-border-muted bg-background-dark px-6 shrink-0">
@@ -198,6 +280,30 @@ export default function TranscriptReview() {
         </section>
 
         <section className="flex flex-1 flex-col border-r border-border-muted bg-background-dark min-w-0">
+          {recordingStorage.enabled() && hasRecording && (
+            <div className="border-b border-border-muted p-4 space-y-3 bg-charcoal-accent/30">
+              <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
+                <span className="material-symbols-outlined text-lg">video_library</span>
+                Recording
+              </h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <button type="button" onClick={handleOpenRecording} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/50 text-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary/10 transition-colors" aria-label="Open recording">
+                  <span className="material-symbols-outlined text-sm" aria-hidden>play_circle</span>
+                  Open recording
+                </button>
+                <button type="button" disabled={reRunningAnalysis} onClick={handleReRunAnalysis} className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/50 text-primary text-[10px] font-bold uppercase tracking-wider hover:bg-primary/10 transition-colors disabled:opacity-60 disabled:cursor-wait" aria-label="Re-run analysis from recording">
+                  <span className="material-symbols-outlined text-sm" aria-hidden>refresh</span>
+                  {reRunningAnalysis ? 'Analyzing…' : 'Re-run analysis'}
+                </button>
+              </div>
+              {reRunError && <p className="text-xs text-red-400">{reRunError}</p>}
+              {recordingUrl && (
+                <div className="rounded-lg border border-white/10 overflow-hidden bg-black aspect-video max-w-md">
+                  <video src={recordingUrl} controls muted playsInline className="w-full h-full object-contain" />
+                </div>
+              )}
+            </div>
+          )}
           <div className="flex items-center justify-between border-b border-border-muted p-4">
             <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
               <span className="material-symbols-outlined text-lg">videocam</span>
@@ -268,13 +374,19 @@ export default function TranscriptReview() {
             </button>
             {summarizeError && <p className="text-xs text-red-400">{summarizeError}</p>}
           </div>
-          <div className="custom-scroll flex-1 overflow-y-auto p-6">
-            <textarea
-              className="w-full min-h-[280px] text-sm leading-relaxed text-slate-300 bg-white/5 border border-white/10 rounded p-3 focus:ring-1 focus:ring-primary/50 focus:border-primary/50 resize-y"
-              value={structuredExamToSingleText(structuredExam, getTemplateForExamType(session?.examType))}
-              onChange={(e) => setStructuredExam(singleTextToStructuredExam(e.target.value, getTemplateForExamType(session?.examType), structuredExam))}
-              placeholder="Use ## Section name then content for each section."
-            />
+          <div className="custom-scroll flex-1 overflow-y-auto p-6 space-y-4">
+            {Object.keys(getTemplateForExamType(session?.examType)).map((heading) => (
+              <div key={heading} className="border-b border-border-muted pb-4 last:border-b-0 last:pb-0">
+                <p className="text-[9px] font-black uppercase tracking-widest text-primary/60 mb-1.5">{heading}</p>
+                <textarea
+                  className="w-full text-sm leading-relaxed text-slate-300 bg-transparent resize-none outline-none border-none focus:ring-0 placeholder:text-slate-600 min-h-[2.5rem]"
+                  value={structuredExam[heading] || ''}
+                  rows={2}
+                  onChange={(e) => setStructuredExam((prev) => ({ ...prev, [heading]: e.target.value }))}
+                  placeholder="—"
+                />
+              </div>
+            ))}
           </div>
           <div className="p-6 border-t border-border-muted bg-background-dark/80 backdrop-blur-md">
             <button type="button" onClick={handleFinalize} className="w-full flex items-center justify-center gap-3 rounded-xl bg-primary py-4 text-sm font-black uppercase tracking-[0.2em] text-background-dark shadow-lg shadow-primary/20 transition-transform active:scale-95 hover:brightness-110">
