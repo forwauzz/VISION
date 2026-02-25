@@ -15,7 +15,7 @@
 
 export const SESSIONS_STORAGE_KEY = 'VISION_SESSIONS'
 
-/** @typedef {'Shoulder' | 'Scar' | 'Orthopedic'} ExamType */
+/** @typedef {'Shoulder' | 'Scar' | 'Orthopedic' | 'SOAP'} ExamType */
 /** @typedef {'in_progress' | 'completed'} SessionStatus */
 
 /** @typedef {{ text: string, start_time: number, end_time: number, segment_id?: string }} TranscriptSegment */
@@ -23,4 +23,4 @@ export const SESSIONS_STORAGE_KEY = 'VISION_SESSIONS'
 /** @typedef {{ frame_id: string, timestamp: string, linked_transcript_segment_id: string, visual_description: string, visibility?: FrameVisibility, autoCaptured?: boolean, dataUrl?: string }} FrameRecord */
 /** @typedef {{ Inspection?: string, 'Active Range of Motion'?: string, Swelling?: string, Scarring?: string }} StructuredExam */
 
-/** @typedef {{ id: string, userId: string, establishmentId: string, examType: ExamType, bodyRegion?: string, startedAt: string, status: SessionStatus, endAt?: string, audio_transcript?: TranscriptSegment[], frames?: FrameRecord[], structured_exam?: StructuredExam }} SessionStub */
+/** @typedef {{ id: string, userId: string, establishmentId: string, examType: ExamType, bodyRegion?: string, deviceTypeId?: string, startedAt: string, status: SessionStatus, endAt?: string, audio_transcript?: TranscriptSegment[], frames?: FrameRecord[], structured_exam?: StructuredExam }} SessionStub */

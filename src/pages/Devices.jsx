@@ -4,6 +4,7 @@
  */
 import { useEffect, useState } from 'react'
 import { getDevicePrefs, setDevicePrefs } from '../lib/devicePrefs.js'
+import { DEVICE_OPTIONS } from '../lib/deviceOptions.js'
 import AppLayout from '../components/AppLayout.jsx'
 
 function deviceLabel(device, index, kind) {
@@ -16,6 +17,7 @@ export default function Devices() {
   const [audioDevices, setAudioDevices] = useState([])
   const [selectedVideoId, setSelectedVideoId] = useState('')
   const [selectedAudioId, setSelectedAudioId] = useState('')
+  const [selectedDeviceTypeId, setSelectedDeviceTypeId] = useState('')
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function Devices() {
         const prefs = getDevicePrefs()
         setSelectedVideoId(prefs.videoDeviceId ?? '')
         setSelectedAudioId(prefs.audioDeviceId ?? '')
+        setSelectedDeviceTypeId(prefs.deviceTypeId ?? '')
       } catch {
         if (!cancelled) {
           setVideoDevices([])
@@ -46,6 +49,7 @@ export default function Devices() {
     const ok = setDevicePrefs({
       videoDeviceId: selectedVideoId || null,
       audioDeviceId: selectedAudioId || null,
+      deviceTypeId: selectedDeviceTypeId || null,
     })
     if (ok) {
       setSaved(true)
@@ -64,7 +68,7 @@ export default function Devices() {
           <p className="text-slate-400 text-lg max-w-2xl">Set your default camera and microphone for sessions. Webcam is the default if none is chosen.</p>
         </header>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           <div className="bg-surface-dark/60 backdrop-blur-sm border border-border-dark rounded-xl p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -107,6 +111,29 @@ export default function Devices() {
               <option value="">System default</option>
               {audioDevices.map((d, i) => (
                 <option key={d.deviceId} value={d.deviceId}>{deviceLabel(d, i, 'audioinput')}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="bg-surface-dark/60 backdrop-blur-sm border border-border-dark rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-2xl">devices</span>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Primary device type</h3>
+                <p className="text-slate-500 text-sm">Capture hardware for sessions</p>
+              </div>
+            </div>
+            <select
+              value={selectedDeviceTypeId ?? ''}
+              onChange={(e) => setSelectedDeviceTypeId(e.target.value)}
+              className="w-full bg-background-dark border border-border-dark rounded-lg px-3 py-2.5 text-sm text-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/30"
+              aria-label="Select primary device type"
+            >
+              <option value="">Not set</option>
+              {DEVICE_OPTIONS.map((opt) => (
+                <option key={opt.id} value={opt.id}>{opt.label}</option>
               ))}
             </select>
           </div>

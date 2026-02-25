@@ -41,11 +41,11 @@ export function getSessionsByEstablishment(establishmentId) {
 
 /**
  * Create a new session stub and append to storage.
- * @param {{ userId: string, establishmentId: string, examType: 'Shoulder' | 'Scar' | 'Orthopedic', bodyRegion?: string }} params
+ * @param {{ userId: string, establishmentId: string, examType: 'Shoulder' | 'Scar' | 'Orthopedic', bodyRegion?: string, deviceTypeId?: string }} params
  * @returns {import('./sessionStorageSchema.js').SessionStub | null}
  */
 export function createSessionStub(params) {
-  const { userId, establishmentId, examType, bodyRegion } = params
+  const { userId, establishmentId, examType, bodyRegion, deviceTypeId } = params
   if (!userId || !establishmentId || !examType) return null
   const list = readList()
   const id = `session-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
@@ -55,6 +55,7 @@ export function createSessionStub(params) {
     establishmentId,
     examType,
     ...(bodyRegion ? { bodyRegion } : {}),
+    ...(deviceTypeId ? { deviceTypeId } : {}),
     startedAt: new Date().toISOString(),
     status: 'in_progress',
   }

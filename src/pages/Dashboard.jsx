@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { getAuth, setActiveEstablishment } from '../lib/auth.js'
 import { getSessionsByEstablishment, createSessionStub } from '../lib/sessions.js'
 import { getDevicePrefs } from '../lib/devicePrefs.js'
+import { DEVICE_OPTIONS } from '../lib/deviceOptions.js'
 import GoldenVLoading from '../components/GoldenVLoading.jsx'
 import AppLayout from '../components/AppLayout.jsx'
 
@@ -43,6 +44,7 @@ export default function Dashboard() {
   const [audioDevices, setAudioDevices] = useState([])
   const [selectedVideoId, setSelectedVideoId] = useState('')
   const [selectedAudioId, setSelectedAudioId] = useState('')
+  const [selectedDeviceTypeId, setSelectedDeviceTypeId] = useState('')
 
   const sessions = (auth?.activeEstablishmentId ? getSessionsByEstablishment(auth.activeEstablishmentId) : []).map(sessionToDisplay).slice(0, 10)
 
@@ -76,6 +78,7 @@ export default function Dashboard() {
         const prefs = getDevicePrefs()
         setSelectedVideoId(prefs.videoDeviceId ?? '')
         setSelectedAudioId(prefs.audioDeviceId ?? '')
+        setSelectedDeviceTypeId(prefs.deviceTypeId ?? '')
       } catch {
         if (!cancelled) {
           setVideoDevices([])
@@ -99,14 +102,16 @@ export default function Dashboard() {
     const region = bodyRegion.trim()
     const videoId = selectedVideoId || null
     const audioId = selectedAudioId || null
+    const deviceTypeId = selectedDeviceTypeId || null
     setBodyRegion('')
     setSelectedVideoId('')
     setSelectedAudioId('')
+    setSelectedDeviceTypeId('')
     setTimeout(() => {
-      const session = createSessionStub({ userId: auth.userId, establishmentId: auth.activeEstablishmentId, examType, bodyRegion: region })
+      const session = createSessionStub({ userId: auth.userId, establishmentId: auth.activeEstablishmentId, examType, bodyRegion: region, deviceTypeId })
       if (session) {
         navigate(`/session?sessionId=${encodeURIComponent(session.id)}`, {
-          state: { session, videoDeviceId: videoId, audioDeviceId: audioId },
+          state: { session, videoDeviceId: videoId, audioDeviceId: audioId, deviceTypeId },
         })
       }
       setIsStartingSession(false)
@@ -252,6 +257,23 @@ export default function Dashboard() {
             <p className="text-slate-400 text-sm mb-6">Choose the type of exam and devices for this session.</p>
             <div className="mb-4 space-y-3">
               <div>
+                <label htmlFor="exam-device-type" className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
+                  Device type
+                </label>
+                <select
+                  id="exam-device-type"
+                  value={selectedDeviceTypeId}
+                  onChange={(e) => setSelectedDeviceTypeId(e.target.value)}
+                  className="w-full bg-background-dark border border-border-dark rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/30"
+                  aria-label="Select device type"
+                >
+                  <option value="">Not set</option>
+                  {DEVICE_OPTIONS.map((opt) => (
+                    <option key={opt.id} value={opt.id}>{opt.label}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
                 <label htmlFor="exam-video-device" className="block text-xs font-bold uppercase tracking-widest text-slate-400 mb-1">
                   Camera
                 </label>
@@ -313,7 +335,7 @@ export default function Dashboard() {
                 Orthopedic
               </button>
             </div>
-            <button type="button" onClick={() => { setShowExamModal(false); setBodyRegion('') }} className="mt-6 w-full py-2 text-slate-400 hover:text-white text-sm transition-colors">
+            <button type="button" onClick={() => { setShowExamModal(false); setBodyRegion(''); setSelectedDeviceTypeId('') }} className="mt-6 w-full py-2 text-slate-400 hover:text-white text-sm transition-colors">
               Cancel
             </button>
           </div>
