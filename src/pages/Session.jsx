@@ -59,6 +59,8 @@ export default function Session() {
   const [isAnalyzingRecording, setIsAnalyzingRecording] = useState(false)
   const [visionError, setVisionError] = useState('')
   const [showExamPhaseNudge, setShowExamPhaseNudge] = useState(false)
+  const [showEndSessionConfirm, setShowEndSessionConfirm] = useState(false)
+  const [analysisStep, setAnalysisStep] = useState(0)
   const [recordedVideoUrl, setRecordedVideoUrl] = useState(null)
   const [videoCapReached, setVideoCapReached] = useState(false)
   const [videoSource, setVideoSource] = useState('live')
@@ -358,8 +360,10 @@ export default function Session() {
     if (blob) {
       setGeneratingReport(true)
       setIsAnalyzingRecording(true)
+      setAnalysisStep(1)
       try {
         const audio_transcript = await transcribeVideo(blob)
+        setAnalysisStep(2)
         const sessionStart = sessionStartTimeRef.current ?? Date.now()
         const extractedFrames = await extractFramesFromVideoBlob(
           blob,
@@ -367,6 +371,7 @@ export default function Session() {
           audio_transcript,
           sessionStart
         )
+        setAnalysisStep(3)
         const payloadForVision = {
           examType: session.examType,
           bodyRegion: session.bodyRegion ?? '',
@@ -384,12 +389,13 @@ export default function Session() {
         if (recordingStorage.enabled()) {
           await recordingStorage.save(session.id, blob)
         }
-        navigate(`/review?sessionId=${encodeURIComponent(session.id)}`, { state: { sessionId: session.id } })
+        navigate(`/review?sessionId=${encodeURIComponent(session.id)}`, { state: { sessionId: session.id, fromSession: true } })
       } catch (e) {
         setVisionError(e.message || 'Analysis failed')
       } finally {
         setGeneratingReport(false)
         setIsAnalyzingRecording(false)
+        setAnalysisStep(0)
       }
       return
     }
@@ -412,11 +418,12 @@ export default function Session() {
         }
         saveSessionPayload(session.id, payload)
         updateSession(session.id, { status: 'completed' })
-        navigate(`/review?sessionId=${encodeURIComponent(session.id)}`, { state: { sessionId: session.id } })
+        navigate(`/review?sessionId=${encodeURIComponent(session.id)}`, { state: { sessionId: session.id, fromSession: true } })
       } catch (e) {
         setVisionError(e.message || 'Report generation failed')
       } finally {
         setGeneratingReport(false)
+        setAnalysisStep(0)
       }
       return
     }
@@ -427,7 +434,7 @@ export default function Session() {
     }
     saveSessionPayload(session.id, payload)
     updateSession(session.id, { status: 'completed' })
-    navigate(`/review?sessionId=${encodeURIComponent(session.id)}`, { state: { sessionId: session.id } })
+    navigate(`/review?sessionId=${encodeURIComponent(session.id)}`, { state: { sessionId: session.id, fromSession: true } })
   }, [session?.id, session?.examType, transcriptSegments, frames, structuredExam, stopRecording, navigate])
 
   const sessionIdDisplay = session?.id ? session.id.replace(/^session-/, '').slice(0, 12).toUpperCase() : '—'
@@ -436,6 +443,22 @@ export default function Session() {
 
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary/30 overflow-hidden h-screen flex flex-col">
+      {showEndSessionConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-labelledby="end-session-confirm-title" aria-modal="true">
+          <div className="bg-charcoal-darker border border-primary/30 rounded-xl p-6 max-w-sm shadow-xl">
+            <h2 id="end-session-confirm-title" className="text-sm font-bold uppercase tracking-widest text-primary mb-2">End session &amp; generate report?</h2>
+            <p className="text-white/80 text-sm mb-4">This will transcribe the recording, describe frames, and build your report. This usually takes about 1 minute.</p>
+            <div className="flex gap-3">
+              <button type="button" onClick={() => { setShowEndSessionConfirm(false); handleEndSession(); }} className="flex-1 px-4 py-2 rounded-lg bg-primary text-charcoal-darker font-bold text-sm uppercase tracking-wider">
+                Finish &amp; generate report
+              </button>
+              <button type="button" onClick={() => setShowEndSessionConfirm(false)} className="flex-1 px-4 py-2 rounded-lg border border-white/20 text-white/80 font-bold text-sm uppercase tracking-wider hover:bg-white/5">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {showExamPhaseNudge && !examModeActive && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-labelledby="exam-nudge-title">
           <div className="bg-charcoal-darker border border-primary/30 rounded-xl p-6 max-w-sm shadow-xl">
@@ -454,8 +477,10 @@ export default function Session() {
       )}
       {generatingReport && (
         <GoldenVLoading
-          message={isAnalyzingRecording ? 'Analyzing recording…' : 'Generating report…'}
-          subMessage={isAnalyzingRecording ? 'Transcribing audio, extracting frames, and building your report. This may take 30–60 seconds.' : 'AI is describing key frames and building your structured report. This may take 10–15 seconds.'}
+          message={analysisStep >= 3 ? 'Generating report…' : 'Analyzing recording…'}
+          subMessage={analysisStep >= 3 ? 'AI is describing key frames and building your structured report.' : 'This may take 30–60 seconds.'}
+          steps={analysisStep > 0 ? ['Transcribing audio', 'Extracting frames', 'Building report'] : null}
+          activeStep={analysisStep}
         />
       )}
       {isStartingRecording && (
@@ -541,6 +566,7 @@ export default function Session() {
               {!isRecording ? (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-charcoal-darker">
                   <p className="text-white/60 text-sm">Camera ready. Start recording to capture video and transcript.</p>
+                  <p className="text-white/40 text-xs">You&apos;ll be able to start exam mode to capture key frames once recording has started.</p>
                   {captureError && <p className="text-red-400 text-xs max-w-xs text-center">{captureError}</p>}
                   <button type="button" disabled={isStartingRecording} onClick={() => startRecording()} className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-background-dark font-bold text-sm uppercase tracking-widest hover:bg-primary/90 transition-colors disabled:opacity-70 disabled:cursor-wait">
                     <span className="material-symbols-outlined">{isStartingRecording ? 'hourglass_empty' : 'mic'}</span>
@@ -624,8 +650,8 @@ export default function Session() {
             <div className="flex items-center justify-between gap-4">
               <h3 className="text-xs font-bold uppercase tracking-widest text-primary/80">Key Frames ({frames.length}/20)</h3>
               {examModeActive && (
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" checked={autoCaptureEnabled} onChange={(e) => setAutoCaptureEnabled(e.target.checked)} className="rounded border-primary/50 text-primary focus:ring-primary/50" />
+                <label className="flex items-center gap-2 cursor-pointer" title="When on, one frame is captured every 10 seconds during recording. See docs/SESSION_FLOWS.md.">
+                  <input type="checkbox" checked={autoCaptureEnabled} onChange={(e) => setAutoCaptureEnabled(e.target.checked)} className="rounded border-primary/50 text-primary focus:ring-primary/50" aria-label="Auto-capture a frame every 10 seconds while recording (max 20 frames)" />
                   <span className="text-[10px] font-bold uppercase tracking-wider text-white/80">Auto-capture (every 10s)</span>
                 </label>
               )}
@@ -699,9 +725,9 @@ export default function Session() {
             <span className="material-symbols-outlined text-lg select-none" aria-hidden>photo_camera</span>
             Capture Frame
           </button>
-          <button type="button" disabled={generatingReport} onClick={handleEndSession} className="flex items-center gap-2 px-5 py-2 rounded-full bg-white text-black hover:bg-primary transition-colors text-[10px] font-extrabold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed" aria-label="End session">
-            <span className="material-symbols-outlined text-lg select-none" aria-hidden>cancel</span>
-            End Session
+          <button type="button" disabled={generatingReport} onClick={() => setShowEndSessionConfirm(true)} className="flex items-center gap-2 px-5 py-2 rounded-full bg-white text-black hover:bg-primary transition-colors text-[10px] font-extrabold uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed" aria-label="Finish and generate report" title="Finish session: transcribe recording, describe frames, build report, and go to review.">
+            <span className="material-symbols-outlined text-lg select-none" aria-hidden>stop_circle</span>
+            Finish &amp; generate report
           </button>
         </div>
         <div className="flex items-center gap-4 justify-end min-w-0">

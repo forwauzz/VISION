@@ -36,6 +36,7 @@ export default function TranscriptReview() {
   const [recordingUrl, setRecordingUrl] = useState(null)
   const [reRunningAnalysis, setReRunningAnalysis] = useState(false)
   const [reRunError, setReRunError] = useState('')
+  const [dismissFromSessionBanner, setDismissFromSessionBanner] = useState(false)
   const frameRefsMap = useRef({})
 
   useEffect(() => {
@@ -249,7 +250,16 @@ export default function TranscriptReview() {
         </div>
       </header>
 
-      <main className="flex flex-1 min-h-0 overflow-hidden">
+      <main className="flex flex-1 min-h-0 overflow-hidden flex-col">
+        {location.state?.fromSession && !dismissFromSessionBanner && (
+          <div className="px-6 py-3 flex items-center justify-between gap-4 bg-primary/10 border-b border-primary/20 shrink-0">
+            <p className="text-sm text-white/90">Report generated from your session. Edit sections below or use Summarize with AI to refine.</p>
+            <button type="button" onClick={() => setDismissFromSessionBanner(true)} className="text-white/60 hover:text-white shrink-0" aria-label="Dismiss">
+              <span className="material-symbols-outlined">close</span>
+            </button>
+          </div>
+        )}
+        <div className="flex flex-1 min-h-0 overflow-hidden">
         <section className="flex w-1/4 flex-col border-r border-border-muted bg-charcoal-accent/50 min-w-0">
           <div className="flex items-center justify-between border-b border-border-muted p-4">
             <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary">
@@ -395,6 +405,7 @@ export default function TranscriptReview() {
             </button>
           </div>
         </section>
+        </div>
       </main>
     </div>
   )
