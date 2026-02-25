@@ -10,11 +10,12 @@ import {
   MOCK_TRANSCRIPT,
   MOCK_FRAMES,
   MOCK_VIDEO_PLACEHOLDER,
+  VISIT_TYPE_CARDS,
 } from '../lib/demoMockData.js'
 import { DEVICE_CARDS } from '../lib/deviceOptions.js'
 
-const VISIT_TYPES = ['Shoulder', 'Orthopedic', 'Scar', 'SOAP']
 const PROCESS_STEPS = ['Transcribing…', 'Analyzing…', 'Masking…']
+const TEMPLATE_OPTIONS = ['Shoulder', 'Orthopedic', 'Scar', 'SOAP']
 
 function formatSegmentTime(seconds) {
   const m = Math.floor(seconds / 60)
@@ -155,21 +156,37 @@ export default function Demo() {
         {step === 2 && (
           <section className="space-y-8">
             <h1 className="text-3xl font-bold dark:text-white">Select visit type</h1>
-            <div className="flex flex-wrap gap-4">
-              {VISIT_TYPES.map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => setSelectedVisitType(v)}
-                  className={`px-8 py-4 rounded-xl border font-semibold transition-all ${
-                    selectedVisitType === v
-                      ? 'border-primary bg-primary/20 text-primary'
-                      : 'border-white/10 hover:border-primary/50'
-                  }`}
-                >
-                  {v}
-                </button>
-              ))}
+            <p className="text-slate-400 max-w-2xl">
+              Choose the specialized clinical path for the patient&apos;s upcoming session. This will tailor the diagnostic tools and clinical workflow accordingly.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {VISIT_TYPE_CARDS.map((card) => {
+                const isSelected = selectedVisitType === card.id
+                return (
+                  <button
+                    key={card.id}
+                    type="button"
+                    onClick={() => setSelectedVisitType(card.id)}
+                    className={`rounded-xl p-6 text-left transition-all border ${
+                      isSelected ? 'border-primary bg-primary/10 gold-glow' : 'border-white/10 hover:border-primary/50 bg-surface-dark/60'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span className="material-symbols-outlined text-2xl text-primary">{card.icon}</span>
+                      </div>
+                      {isSelected && (
+                        <span className="material-symbols-outlined text-primary text-xl">check_circle</span>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-bold dark:text-white mb-2">{card.title}</h3>
+                    <p className="text-sm text-slate-400 mb-4 leading-relaxed">{card.description}</p>
+                    <div className="aspect-video rounded-lg overflow-hidden bg-black/40">
+                      <img src={card.imageUrl} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  </button>
+                )
+              })}
             </div>
             <div className="flex gap-4">
               <button type="button" onClick={() => setStep(1)} className="px-6 py-2 rounded-lg border border-white/20">
@@ -340,7 +357,7 @@ export default function Demo() {
           <section className="space-y-8">
             <h1 className="text-3xl font-bold dark:text-white">Select template</h1>
             <div className="flex flex-wrap gap-4">
-              {VISIT_TYPES.map((v) => (
+              {TEMPLATE_OPTIONS.map((v) => (
                 <button
                   key={v}
                   type="button"
