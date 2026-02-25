@@ -75,35 +75,35 @@ export const MOCK_SUMMARY_SOAP = {
   Plan: 'Continue home exercise program. Return in six weeks for re-evaluation.',
 }
 
-/** Visit type cards for Demo Step 2 — Select Visit Type */
+/** Visit type cards for Demo Step 2 — Select Visit Type. Images match design: slit lamp, surgical tools, recovery, office+laptop. */
 export const VISIT_TYPE_CARDS = [
   {
     id: 'initial-consultation',
     title: 'Initial Consultation',
     description: 'A comprehensive baseline evaluation including advanced diagnostics and vision history profiling.',
     icon: 'add_circle',
-    imageUrl: IMG('1551076805-e1869033e561', 320, 140),
+    imageUrl: IMG('1579684385127-1ef15d508118', 320, 140),
   },
   {
     id: 'pre-op-assessment',
     title: 'Pre-Op Assessment',
     description: 'Rigorous clinical screening and physical preparation protocols prior to surgical procedures.',
     icon: 'microscope',
-    imageUrl: IMG('1559839734-2b71ea197ec2', 320, 140),
+    imageUrl: IMG('1551076805-e1869033e561', 320, 140),
   },
   {
     id: 'post-op-followup',
     title: 'Post-Op Follow-up',
     description: 'Detailed monitoring of recovery progression and post-surgical outcome verification.',
     icon: 'healing',
-    imageUrl: IMG('1579684385127-1ef15d508118', 320, 140),
+    imageUrl: IMG('1581595220892-b0739db3ba8', 320, 140),
   },
   {
     id: 'routine-checkup',
     title: 'Routine Check-up',
     description: 'Annual wellness checks focused on preventative care and prescription maintenance.',
     icon: 'event',
-    imageUrl: IMG('1581595220892-b0739db3ba8', 320, 140),
+    imageUrl: IMG('1559839734-2b71ea197ec2', 320, 140),
   },
 ]
 

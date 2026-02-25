@@ -167,21 +167,21 @@ export default function Demo() {
                     key={card.id}
                     type="button"
                     onClick={() => setSelectedVisitType(card.id)}
-                    className={`rounded-xl p-6 text-left transition-all border ${
+                    className={`rounded-xl p-6 text-left transition-all border flex flex-col min-h-[320px] ${
                       isSelected ? 'border-primary bg-primary/10 gold-glow' : 'border-white/10 hover:border-primary/50 bg-surface-dark/60'
                     }`}
                   >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <div className="flex justify-between items-start mb-4 shrink-0">
+                      <div className="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
                         <span className="material-symbols-outlined text-2xl text-primary">{card.icon}</span>
                       </div>
                       {isSelected && (
-                        <span className="material-symbols-outlined text-primary text-xl">check_circle</span>
+                        <span className="material-symbols-outlined text-primary text-xl shrink-0" aria-hidden>check_circle</span>
                       )}
                     </div>
-                    <h3 className="text-xl font-bold dark:text-white mb-2">{card.title}</h3>
-                    <p className="text-sm text-slate-400 mb-4 leading-relaxed">{card.description}</p>
-                    <div className="aspect-video rounded-lg overflow-hidden bg-black/40">
+                    <h3 className={`text-xl font-bold mb-2 shrink-0 ${isSelected ? 'text-primary' : 'dark:text-white'}`}>{card.title}</h3>
+                    <p className="text-sm text-slate-400 mb-4 leading-relaxed break-words flex-1">{card.description}</p>
+                    <div className="aspect-video rounded-lg overflow-hidden bg-black/40 shrink-0 mt-auto">
                       <img src={card.imageUrl} alt="" className="w-full h-full object-cover" />
                     </div>
                   </button>
