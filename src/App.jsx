@@ -9,6 +9,7 @@ import Session from './pages/Session'
 import TranscriptReview from './pages/TranscriptReview'
 import UploadVideo from './pages/UploadVideo'
 import Devices from './pages/Devices'
+import Demo from './pages/Demo'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/upload-video" element={<ProtectedRoute><UploadVideo /></ProtectedRoute>} />
         <Route path="/devices" element={<ProtectedRoute><Devices /></ProtectedRoute>} />
         <Route path="/review" element={<ProtectedRoute><TranscriptReview /></ProtectedRoute>} />
+        <Route path="/demo" element={<Demo />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

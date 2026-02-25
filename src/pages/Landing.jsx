@@ -47,9 +47,9 @@ export default function Landing() {
             <Link to="/login" className="w-full sm:w-auto min-w-[200px] bg-primary text-background-dark px-8 py-4 rounded-lg text-base font-bold tracking-wide hover:shadow-[0_0_30px_rgba(198,166,93,0.3)] transition-all text-center">
               Login
             </Link>
-            <button type="button" className="w-full sm:w-auto px-8 py-4 rounded-lg text-base font-semibold tracking-wide border border-slate-700 hover:border-primary transition-all">
-              Watch Showcase
-            </button>
+            <Link to="/demo" className="w-full sm:w-auto px-8 py-4 rounded-lg text-base font-semibold tracking-wide border border-slate-700 hover:border-primary transition-all text-center">
+              Demo
+            </Link>
           </div>
         </div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" aria-hidden />

@@ -5,7 +5,7 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { getAuth } from '../lib/auth.js'
 
-const PUBLIC_PATHS = ['/', '/login']
+const PUBLIC_PATHS = ['/', '/login', '/demo']
 
 export default function ProtectedRoute({ children }) {
   const location = useLocation()
