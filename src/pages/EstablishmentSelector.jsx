@@ -4,6 +4,7 @@
  */
 import { useNavigate, Link } from 'react-router-dom'
 import { getAuth, setActiveEstablishment } from '../lib/auth.js'
+import AppLayout from '../components/AppLayout.jsx'
 
 const CARD_IMAGE_FALLBACK = 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=80'
 
@@ -13,43 +14,8 @@ export default function EstablishmentSelector() {
   const establishments = auth?.establishments ?? []
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-white font-display overflow-x-hidden min-h-screen flex flex-col">
-      <header className="flex items-center justify-between border-b border-white/10 px-8 py-4 bg-background-dark/50 backdrop-blur-md sticky top-0 z-50">
-        <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <div className="text-primary">
-                <span className="material-symbols-outlined text-3xl select-none" aria-hidden>visibility</span>
-              </div>
-              <h2 className="text-xl font-light tracking-[0.2em] uppercase">Vision</h2>
-            </div>
-            {establishments.length > 0 && (
-              <Link to="/dashboard" className="text-sm font-medium text-white/60 hover:text-primary transition-colors flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-lg">dashboard</span>
-                Dashboard
-              </Link>
-            )}
-          </div>
-        <div className="flex items-center gap-6">
-          <div className="flex gap-3">
-            <button type="button" className="flex size-10 items-center justify-center rounded-lg bg-neutral-charcoal text-white/70 hover:text-primary hover:bg-neutral-charcoal/80 transition-colors border border-white/5">
-              <span className="material-symbols-outlined text-[20px]">settings</span>
-            </button>
-            <button type="button" className="flex size-10 items-center justify-center rounded-lg bg-neutral-charcoal text-white/70 hover:text-primary hover:bg-neutral-charcoal/80 transition-colors border border-white/5">
-              <span className="material-symbols-outlined text-[20px]">help_outline</span>
-            </button>
-          </div>
-          <div className="h-10 w-[1px] bg-white/10 mx-2" />
-          <div className="flex items-center gap-3">
-            <div className="text-right hidden sm:block">
-              <p className="text-xs font-semibold text-white">{auth?.displayName ?? 'User'}</p>
-              <p className="text-[10px] text-white/50 uppercase tracking-widest">Administrator</p>
-            </div>
-            <div className="rounded-full size-10 border border-primary/30 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(https://lh3.googleusercontent.com/aida-public/AB6AXuA82NsT0sWCzjqkA2o7h-MbtCRUkI2Ih0G82nemwUboPnM3AXzZoR-ufL4vZ_O2PHtdxeCyS4KK5Si2KVIc-UkIlo5Nh7gTIRJTmt23hK2o_NBQ52YGRgvFMePD_HRSjsW-3PUVPy0qbjhWcvzWGOD_7aAMKVsuIUGBzx0QyuInpV0XT6LgLCLL9hHRpe_i8iCPOJXLGgY1x4aC1M8Zaeufs1UU2H6EHC5ibFqwZzyt33aCdz4B7v5X25zB_dDU5YAaAN1QLLUgkpE)' }} />
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-1 flex flex-col items-center px-4 py-12 lg:py-20">
+    <AppLayout>
+      <div className="flex-1 flex flex-col items-center px-4 py-12 lg:py-20">
         <div className="w-full max-w-[1200px] flex flex-col gap-10">
           <div className="flex flex-col gap-2 text-center items-center">
             <h1 className="text-4xl md:text-5xl font-extralight tracking-tight text-white mb-2">
@@ -144,7 +110,7 @@ export default function EstablishmentSelector() {
             </div>
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   )
 }

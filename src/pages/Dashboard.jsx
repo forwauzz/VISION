@@ -4,10 +4,11 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getAuth, clearAuth, setActiveEstablishment } from '../lib/auth.js'
+import { getAuth, setActiveEstablishment } from '../lib/auth.js'
 import { getSessionsByEstablishment, createSessionStub } from '../lib/sessions.js'
 import { getDevicePrefs } from '../lib/devicePrefs.js'
 import GoldenVLoading from '../components/GoldenVLoading.jsx'
+import AppLayout from '../components/AppLayout.jsx'
 
 function formatSessionMeta(startedAt) {
   const d = new Date(startedAt)
@@ -35,7 +36,6 @@ export default function Dashboard() {
   const [auth, setAuth] = useState(getAuth)
   const activeEst = auth?.establishments?.find((e) => e.id === auth?.activeEstablishmentId)
   const establishmentName = activeEst?.name ?? 'Select establishment'
-  const displayName = auth?.displayName ?? 'User'
   const [showExamModal, setShowExamModal] = useState(false)
   const [bodyRegion, setBodyRegion] = useState('')
   const [isStartingSession, setIsStartingSession] = useState(false)
@@ -58,11 +58,6 @@ export default function Dashboard() {
 
   function handleSwitchEstablishment(establishmentId) {
     if (setActiveEstablishment(establishmentId)) setAuth(getAuth())
-  }
-
-  function handleLogout() {
-    clearAuth()
-    navigate('/login', { replace: true })
   }
 
   function handleBeginSession() {
@@ -127,57 +122,24 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen selection:bg-primary/30">
+    <AppLayout>
       {isStartingSession && (
         <GoldenVLoading
           message="Starting session…"
           subMessage="Preparing your workspace and exam template."
         />
       )}
-      <header className="sticky top-0 z-50 w-full border-b border-border-dark bg-background-dark/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2.5">
-              <div className="size-9 bg-primary flex items-center justify-center rounded-lg shadow-lg shadow-primary/20">
-                <span className="material-symbols-outlined text-background-dark font-bold text-2xl">visibility</span>
-              </div>
-              <span className="text-xl font-bold tracking-tight text-white uppercase">Vision</span>
-            </div>
-            <Link to="/establishment-selector" className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-dark border border-border-dark hover:border-primary/50 transition-colors cursor-pointer group">
-              <span className="material-symbols-outlined text-primary text-sm">storefront</span>
-              <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{establishmentName}</span>
-              <span className="material-symbols-outlined text-slate-500 text-sm">expand_more</span>
-            </Link>
-          </div>
-          <div className="flex items-center gap-6">
-            <nav className="hidden lg:flex items-center gap-6">
-              <span className="text-sm font-semibold text-primary border-b-2 border-primary pb-0.5">Dashboard</span>
-              <a className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#analytics">Analytics</a>
-              <Link to="/establishment-selector" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Establishments</Link>
-              <Link to="/devices" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">Devices</Link>
-            </nav>
-            <div className="h-6 w-px bg-border-dark mx-2" />
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col items-end hidden sm:flex">
-                <span className="text-sm font-bold text-white leading-none">{displayName}</span>
-                <span className="text-[10px] text-primary uppercase tracking-widest mt-1 font-semibold">Administrator</span>
-              </div>
-              <div className="relative group cursor-pointer" title="Log out">
-                <button type="button" onClick={handleLogout} className="block rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50">
-                  <div className="size-10 rounded-full border-2 border-border-dark group-hover:border-primary transition-all p-0.5">
-                    <img alt="User avatar" className="rounded-full w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcga_wSdkRQTchXdjuyfVOc8J-ygzwH1sqf79dzyrncUtdKPfxtG4M-MZEZQzEtacZEZBHrsa_YNhM4Tt_W2bUXovl0XpeIdLEyA04r899Aaq915I9a7ImM5b1p7e9YPyxKtXB6IfizGQ5MfcjmfKXJBIJ3l-QHn3p1u4bh1423TqAIn5lqBuxWK_cWjhfNqj7oK6dcJ5U9uKYNN7jL4MtUfyMZc5juIrf0LGxj-THyz6glkG25VbtPnXOMrmC2Wcm3bvR1rMZkmI" />
-                  </div>
-                </button>
-                <div className="absolute -bottom-1 -right-1 bg-background-dark border border-border-dark rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  <span className="material-symbols-outlined text-[12px] text-red-400">logout</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="sticky top-0 z-30 border-b border-border-dark bg-background-dark/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+          <Link to="/establishment-selector" className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-dark border border-border-dark hover:border-primary/50 transition-colors cursor-pointer group">
+            <span className="material-symbols-outlined text-primary text-sm">storefront</span>
+            <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">{establishmentName}</span>
+            <span className="material-symbols-outlined text-slate-500 text-sm">expand_more</span>
+          </Link>
         </div>
-      </header>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         <section className="flex flex-col items-center justify-center text-center py-20 mb-12">
           <h2 className="text-slate-500 text-sm font-bold uppercase tracking-[0.3em] mb-4">Command Center</h2>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 tracking-tight">Ready for a new session?</h1>
@@ -279,7 +241,7 @@ export default function Dashboard() {
             <div>Vision v2.4.0-Stable • © 2024</div>
           </div>
         </section>
-      </main>
+      </div>
       <div className="fixed top-1/4 -left-32 size-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" aria-hidden />
       <div className="fixed bottom-0 -right-32 size-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" aria-hidden />
 
@@ -357,6 +319,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   )
 }
