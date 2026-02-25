@@ -30,6 +30,8 @@ export default function Session() {
   const location = useLocation()
   const sessionId = location.state?.sessionId || new URLSearchParams(location.search).get('sessionId')
   const session = location.state?.session ?? (sessionId ? getSessionById(sessionId) : null)
+  const videoDeviceId = location.state?.videoDeviceId ?? null
+  const audioDeviceId = location.state?.audioDeviceId ?? null
   const videoRef = useRef(null)
   const replayVideoRef = useRef(null)
   const streamRef = useRef(null)
@@ -86,9 +88,12 @@ export default function Session() {
     }
     setStructuredExam(getEmptyExamForType(session.examType))
     let stream = null
+    const videoConstraints = videoDeviceId ? { deviceId: { ideal: videoDeviceId } } : true
+    const audioConstraints = audioDeviceId ? { deviceId: { ideal: audioDeviceId } } : true
+    const constraints = { video: videoConstraints, audio: audioConstraints }
     const setup = async () => {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        stream = await navigator.mediaDevices.getUserMedia(constraints)
         streamRef.current = stream
         const video = videoRef.current
         if (video) {
@@ -97,8 +102,25 @@ export default function Session() {
           await video.play().catch(() => {})
         }
       } catch (e) {
-        console.error('getUserMedia failed', e)
-        setCaptureError('Camera/mic access failed. Allow access and refresh.')
+        if (videoDeviceId || audioDeviceId) {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            streamRef.current = stream
+            const video = videoRef.current
+            if (video) {
+              video.srcObject = stream
+              video.muted = true
+              await video.play().catch(() => {})
+            }
+            setCaptureError('Selected device unavailable. Using default camera/mic.')
+          } catch (e2) {
+            console.error('getUserMedia fallback failed', e2)
+            setCaptureError('Camera/mic access failed. Allow access and refresh.')
+          }
+        } else {
+          console.error('getUserMedia failed', e)
+          setCaptureError('Camera/mic access failed. Allow access and refresh.')
+        }
       }
     }
     setup()
@@ -118,7 +140,7 @@ export default function Session() {
         recordedVideoUrlRef.current = null
       }
     }
-  }, [session?.id, navigate])
+  }, [session?.id, navigate, videoDeviceId, audioDeviceId])
 
   useEffect(() => {
     if (!isRecording || !startTime) return
@@ -161,8 +183,11 @@ export default function Session() {
     setIsStartingRecording(true)
     let stream = streamRef.current
     if (!stream || !stream.active) {
+      const vConstraints = videoDeviceId ? { deviceId: { ideal: videoDeviceId } } : true
+      const aConstraints = audioDeviceId ? { deviceId: { ideal: audioDeviceId } } : true
+      const mediaConstraints = { video: vConstraints, audio: aConstraints }
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        stream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
         streamRef.current = stream
         const video = videoRef.current
         if (video) {
@@ -171,9 +196,27 @@ export default function Session() {
           await video.play().catch(() => {})
         }
       } catch (e) {
-        setCaptureError('Could not access camera/mic. Check permissions.')
-        setIsStartingRecording(false)
-        return
+        if (videoDeviceId || audioDeviceId) {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+            streamRef.current = stream
+            const video = videoRef.current
+            if (video) {
+              video.srcObject = stream
+              video.muted = true
+              await video.play().catch(() => {})
+            }
+            setCaptureError('Selected device unavailable. Using default.')
+          } catch (e2) {
+            setCaptureError('Could not access camera/mic. Check permissions.')
+            setIsStartingRecording(false)
+            return
+          }
+        } else {
+          setCaptureError('Could not access camera/mic. Check permissions.')
+          setIsStartingRecording(false)
+          return
+        }
       }
     }
     try {
@@ -280,7 +323,7 @@ export default function Session() {
       setCaptureError('Recording could not start. Try allowing microphone.')
     }
     setIsStartingRecording(false)
-  }, [session?.id, isStartingRecording])
+  }, [session?.id, isStartingRecording, videoDeviceId, audioDeviceId])
 
   const stopRecording = useCallback(() => {
     if (chunkTimeoutRef.current) {

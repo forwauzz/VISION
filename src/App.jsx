@@ -7,6 +7,8 @@ import EstablishmentSelector from './pages/EstablishmentSelector'
 import Dashboard from './pages/Dashboard'
 import Session from './pages/Session'
 import TranscriptReview from './pages/TranscriptReview'
+import UploadVideo from './pages/UploadVideo'
+import Devices from './pages/Devices'
 
 export default function App() {
   return (
@@ -17,6 +19,8 @@ export default function App() {
         <Route path="/establishment-selector" element={<ProtectedRoute><EstablishmentSelector /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/session" element={<ProtectedRoute><Session /></ProtectedRoute>} />
+        <Route path="/upload-video" element={<ProtectedRoute><UploadVideo /></ProtectedRoute>} />
+        <Route path="/devices" element={<ProtectedRoute><Devices /></ProtectedRoute>} />
         <Route path="/review" element={<ProtectedRoute><TranscriptReview /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
