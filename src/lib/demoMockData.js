@@ -71,10 +71,19 @@ export const MOCK_SUMMARY_SHOULDER = {
 }
 
 export const MOCK_SUMMARY_ORTHOPEDIC = {
-  Inspection: 'Patient seated comfortably. No visible deformity. Surgical sites well-healed. Skin intact with normal pigmentation. No atrophy. Symmetric muscle bulk. Gait within normal limits.',
-  'Active Range of Motion': 'Full flexion and abduction. External rotation limited to 45 degrees. Passive ROM full and pain-free. No instability. Strength 5/5 throughout.',
-  Swelling: 'Minimal soft tissue swelling confined to portal region. No joint effusion. Distal neurovascular status intact.',
-  Scarring: 'Portals healed without complication. No evidence of infection or delayed healing. Sutures removed at prior visit.',
+  'Referring Physician': 'Dr. Smith',
+  'Reason for Referral': 'Persistent right knee pain following workplace injury',
+  'Chief Complaint': 'Right knee pain, persistent for 4 months following twisting injury at work.',
+  'History of Present Illness': 'Mr. Doe is a 40-year-old male who sustained a right knee injury on October 18, 2025 while lifting a heavy box and pivoting to the left. He reports immediate medial knee pain with mild swelling within 12 hours. Since the injury: persistent medial knee pain (rated 6/10 baseline, 8/10 with stairs); mechanical symptoms: intermittent clicking, no true locking, occasional giving way sensation; swelling after prolonged standing (>2 hours). He completed 8 sessions of physiotherapy (partial improvement), NSAIDs intermittently, activity modification. No prior history of right knee injury.',
+  'Functional Limitations': 'Patient reports difficulty with: prolonged standing (>30 minutes), climbing stairs, squatting, kneeling, carrying loads >15 kg. Currently working modified duties.',
+  'Past Medical History': 'No prior knee injuries. No inflammatory arthritis. No diabetes. No previous surgeries.',
+  'Medications': 'Naproxen PRN. Acetaminophen PRN.',
+  'Physical Examination': 'General: Well appearing male, no acute distress, normal gait with mild protective pattern. Inspection: Mild right knee effusion. No erythema. No deformity. Palpation: Tenderness over medial joint line. Range of Motion: Flexion 0–125° (pain beyond 110°), Extension full. Stability Testing: Lachman negative, Anterior drawer negative, Posterior drawer negative, Varus/Valgus stress stable. Meniscal Testing: McMurray positive medially (pain + click), Thessaly positive. Neurovascular exam intact.',
+  'Imaging': 'MRI (January 2026): Medial meniscus posterior horn complex tear. Mild joint effusion. No ligamentous injury. Mild chondral thinning medial compartment.',
+  'Assessment': 'Right medial meniscus tear (posterior horn, complex pattern). Mild early medial compartment chondropathy. Persistent functional limitation despite conservative management. The clinical findings correlate with MRI imaging and mechanism of injury. The patient\'s symptoms and examination are consistent with a medial meniscal tear.',
+  'Treatment Plan': 'Discussed continued conservative care vs arthroscopic intervention. Given persistent symptoms >4 months and functional limitations, patient is a candidate for arthroscopic partial meniscectomy. Risks, benefits, and alternatives explained. Continue physiotherapy focusing on quadriceps strengthening. NSAIDs as needed. Work restrictions maintained (no heavy lifting, no kneeling, no squatting). Surgical consultation booked.',
+  'Prognosis': 'Prognosis is favorable with surgical treatment. Expected recovery timeline post-arthroscopy: 6–12 weeks. If untreated, ongoing mechanical symptoms likely to persist.',
+  'Work Status': 'Modified duties recommended. Avoid prolonged standing >30 minutes. No squatting or kneeling. Reassessment in 6 weeks.',
 }
 
 export const MOCK_SUMMARY_PLASTIC_SURGERY = {
