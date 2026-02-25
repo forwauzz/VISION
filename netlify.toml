@@ -31,3 +31,9 @@
   to = "/.netlify/functions/summarize-session"
   status = 200
   force = true
+
+# SPA fallback: serve index.html for client-side routes (e.g. /demo, /login) so React Router handles them.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
