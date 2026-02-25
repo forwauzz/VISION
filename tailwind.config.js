@@ -20,6 +20,7 @@ export default {
         'panel-bg': '#1a1814',
         'border-muted': '#2a2824',
         'charcoal-accent': '#1a1a1a',
+        'neutral-dark': '#1e1b14',
       },
       fontFamily: {
         display: ['Manrope', 'sans-serif'],
