@@ -6,14 +6,16 @@
 
 const IMG = (id, w, h) => `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop`
 
-/** Video capture preview — orthopedic exam / doctor-patient context */
-export const MOCK_VIDEO_PLACEHOLDER = IMG('1579684385127-1ef15d508118', 640, 360)
+/** Video capture preview — CLLC clinic orthopedic exam (main screen for Step 4) */
+export const MOCK_VIDEO_PLACEHOLDER = '/demo/recording-main.png'
 
-/** Frame mock images — orthopedic doctor-patient exam, not surgery room */
+/** Key frame images — CLLC clinic doctor-patient exams (leg, back, arm/shoulder, knee) */
 const FRAME_IMAGES = [
-  IMG('1607619056574-b059194b8c1e', 320, 180),
-  IMG('1612349317158-e41353167632', 320, 180),
-  IMG('1576092764391-7b43d4d2c944', 320, 180),
+  '/demo/frame-1.png',
+  '/demo/frame-2.png',
+  '/demo/frame-3.png',
+  '/demo/frame-4.png',
+  '/demo/frame-5.png',
 ]
 
 export const MOCK_TRANSCRIPT = [
@@ -28,51 +30,85 @@ export const MOCK_FRAMES = [
     frame_id: 'frame-1',
     timestamp: new Date(Date.now() - 120000).toISOString(),
     linked_transcript_segment_id: 'seg-1',
-    visual_description: 'Patient seated. Right shoulder visible. No visible deformity. Skin intact over surgical sites.',
+    visual_description: 'Practitioner assessing patient\'s back. Patient indicates lower back discomfort. CLLC clinic setting.',
     dataUrl: FRAME_IMAGES[0],
   },
   {
     frame_id: 'frame-2',
-    timestamp: new Date(Date.now() - 90000).toISOString(),
-    linked_transcript_segment_id: 'seg-2',
-    visual_description: 'Active abduction demonstrated. Arm elevated to approximately 150 degrees. Smooth arc of motion.',
+    timestamp: new Date(Date.now() - 105000).toISOString(),
+    linked_transcript_segment_id: 'seg-1',
+    visual_description: 'Practitioner examining patient\'s arm and shoulder. Patient seated on examination table.',
     dataUrl: FRAME_IMAGES[1],
   },
   {
     frame_id: 'frame-3',
+    timestamp: new Date(Date.now() - 90000).toISOString(),
+    linked_transcript_segment_id: 'seg-2',
+    visual_description: 'Knee examination. Practitioner hands on patient\'s right knee. Anatomical charts visible.',
+    dataUrl: FRAME_IMAGES[2],
+  },
+  {
+    frame_id: 'frame-4',
+    timestamp: new Date(Date.now() - 75000).toISOString(),
+    linked_transcript_segment_id: 'seg-2',
+    visual_description: 'Arm and shoulder assessment. Practitioner palpating patient\'s upper arm.',
+    dataUrl: FRAME_IMAGES[3],
+  },
+  {
+    frame_id: 'frame-5',
     timestamp: new Date(Date.now() - 60000).toISOString(),
     linked_transcript_segment_id: 'seg-3',
-    visual_description: 'Close-up of portal sites. Well-healed incisions. Minimal swelling. No signs of infection.',
-    dataUrl: FRAME_IMAGES[2],
+    visual_description: 'Back assessment. Practitioner palpating mid-back. Patient indicating lower back area.',
+    dataUrl: FRAME_IMAGES[4],
   },
 ]
 
 export const MOCK_SUMMARY_SHOULDER = {
-  Inspection: 'Well-healed portal incisions. No erythema or drainage. Mild swelling over anterolateral portal. Skin intact.',
-  'Active Range of Motion': 'Flexion to 160 degrees. Abduction to 150 degrees. External rotation limited to 45 degrees. Smooth arc of motion.',
-  Swelling: 'Mild swelling over anterolateral portal. Otherwise unremarkable.',
-  Scarring: 'Portals well-healed. No adhesions or hypertrophic scarring.',
+  Inspection: 'Well-healed portal incisions over anterior and posterior aspects. No erythema, warmth, or drainage. Mild swelling over anterolateral portal. Skin intact with normal color and temperature. No visible deformity. Deltoid contour symmetric bilaterally.',
+  'Active Range of Motion': 'Flexion to 160 degrees. Abduction to 150 degrees. External rotation limited to 45 degrees with smooth arc of motion. Internal rotation to T12. No crepitus or guarding. Patient reports mild discomfort at end range.',
+  Swelling: 'Mild swelling localized to anterolateral portal. No effusion. Soft tissue contours otherwise within normal limits.',
+  Scarring: 'Portals well-healed with minimal induration. No adhesions, hypertrophic scarring, or keloid formation. Incision sites nontender to palpation.',
 }
 
 export const MOCK_SUMMARY_ORTHOPEDIC = {
-  Inspection: 'No visible deformity. Surgical sites well-healed. Skin intact.',
-  'Active Range of Motion': 'Full flexion and abduction. External rotation limited to 45 degrees.',
-  Swelling: 'Minimal. Confined to portal region.',
-  Scarring: 'Portals healed. No complications.',
+  Inspection: 'Patient seated comfortably. No visible deformity. Surgical sites well-healed. Skin intact with normal pigmentation. No atrophy. Symmetric muscle bulk. Gait within normal limits.',
+  'Active Range of Motion': 'Full flexion and abduction. External rotation limited to 45 degrees. Passive ROM full and pain-free. No instability. Strength 5/5 throughout.',
+  Swelling: 'Minimal soft tissue swelling confined to portal region. No joint effusion. Distal neurovascular status intact.',
+  Scarring: 'Portals healed without complication. No evidence of infection or delayed healing. Sutures removed at prior visit.',
 }
 
-export const MOCK_SUMMARY_SCAR = {
-  Inspection: 'Surgical scars visible. Well-healed.',
-  'Active Range of Motion': 'N/A for scar assessment.',
-  Swelling: 'None noted.',
-  Scarring: 'Portals well-healed. No hypertrophic or keloid formation.',
+export const MOCK_SUMMARY_PLASTIC_SURGERY = {
+  'Preoperative Assessment': 'Patient evaluated for elective procedure. Medical optimization complete. Consents obtained. Marking and photography documented. No contraindications identified.',
+  'Surgical Site': 'Clean, dry, intact. No signs of infection. Incision lines marked and confirmed with patient. Anatomic landmarks identified.',
+  'Postoperative Plan': 'Dressing protocol reviewed. Follow-up scheduled at 1 week, 2 weeks, and 6 weeks. Activity restrictions and wound care instructions provided. Emergency contact information confirmed.',
 }
 
 export const MOCK_SUMMARY_SOAP = {
-  Subjective: 'Patient presents for follow-up of right shoulder arthroscopy. Reports decreased pain and improved function since last visit.',
-  Objective: 'Vital signs stable. Active ROM: flexion 160°, abduction 150°, external rotation 45°. Strength 5/5. Hawkins and Neer negative.',
-  Assessment: 'Status post shoulder arthroscopy with good progress. No signs of infection or complication.',
-  Plan: 'Continue home exercise program. Return in six weeks for re-evaluation.',
+  Subjective: 'Patient presents for follow-up of right shoulder arthroscopy performed 8 weeks ago. Chief complaint: mild residual stiffness. Reports decreased pain since last visit. Denies numbness, tingling, or weakness. Sleep improved. ADLs largely unrestricted. No new trauma or injury.',
+  Objective: 'Vital signs: BP 118/72, HR 72, RR 14, SpO2 98% on room air. Alert and oriented. Active ROM: flexion 160°, abduction 150°, external rotation 45°. Strength 5/5 deltoid, supraspinatus, infraspinatus. Hawkins and Neer tests negative. O\'Brien test negative. Well-healed portals. No effusion.',
+  Assessment: 'Status post right shoulder arthroscopy with good progress. No signs of infection, instability, or complication. Mild residual stiffness consistent with healing phase.',
+  Plan: 'Continue home exercise program focusing on ROM and strengthening. Return to full activity as tolerated. Follow-up in six weeks. Patient instructed on red-flag symptoms and when to call.',
+}
+
+export const MOCK_SUMMARY_NEW_CONSULTATION = {
+  'Chief Complaint': 'Right shoulder pain and limited motion, 6 weeks post-injury.',
+  'History of Present Illness': 'Patient reports mechanism of fall onto outstretched arm. Initial X-rays negative. Conservative management with sling and PT for 4 weeks. Pain improved but persistent stiffness and occasional clicking. No prior shoulder surgery. Medical history noncontributory. Allergies: NKDA. Current medications: none.',
+  'Physical Examination': 'Inspection: no deformity. Palpation: mild tenderness over rotator cuff. ROM: flexion 140°, abduction 130°, external rotation 30°. Strength: 4+/5 supraspinatus. Special tests: Hawkins positive, Neer positive. Neurovascular intact.',
+  'Assessment and Plan': 'Clinical picture consistent with rotator cuff tendinopathy versus partial tear. MRI ordered to evaluate. Continue PT. NSAIDs as needed. Follow-up after imaging with orthopedics.',
+}
+
+export const MOCK_SUMMARY_FOLLOW_UP = {
+  'Interval History': 'Patient returns for scheduled follow-up. Reports continued improvement. Pain reduced from 5/10 to 2/10. ROM improving. No new concerns. Compliance with home exercises good.',
+  'Examination': 'Portals well-healed. ROM: flexion 165°, abduction 155°, external rotation 50°. Strength 5/5. No instability. No effusion.',
+  'Progress': 'Meeting expected milestones. Wound healing complete. Functional goals on track.',
+  'Plan': 'Advance to full activity. Discontinue formal PT. Follow-up PRN. Return for final visit in 4 weeks or sooner if concerns.',
+}
+
+export const MOCK_SUMMARY_SCAR = {
+  Inspection: 'Surgical scars visible at anterior, lateral, and posterior portal sites. Well-healed with minimal pigment change.',
+  'Active Range of Motion': 'N/A for scar assessment. ROM evaluated separately.',
+  Swelling: 'None noted. Scars flat and supple.',
+  Scarring: 'Portals well-healed. No hypertrophic or keloid formation. Scars mature, nontender. No adhesions to underlying structures. Scar massage and silicone gel discussed for cosmesis.',
 }
 
 /** Visit type cards for Demo Step 2 — Select Visit Type. Images match design: slit lamp, surgical tools, recovery, office+laptop. */
@@ -107,12 +143,26 @@ export const VISIT_TYPE_CARDS = [
   },
 ]
 
-export function getMockSummaryForTemplate(examType) {
+/** Template options for Step 8 dropdown — Orthopedic, Plastic Surgery, SOAP, etc. */
+export const TEMPLATE_OPTIONS = [
+  { id: 'orthopedic', label: 'Orthopedic Exam' },
+  { id: 'plastic-surgery', label: 'Plastic Surgery' },
+  { id: 'soap', label: 'SOAP Notes' },
+  { id: 'new-consultation', label: 'New Consultation' },
+  { id: 'follow-up', label: 'Follow-up' },
+  { id: 'shoulder', label: 'Shoulder Exam' },
+  { id: 'scar', label: 'Scar Assessment' },
+]
+
+export function getMockSummaryForTemplate(templateId) {
   const map = {
-    Shoulder: MOCK_SUMMARY_SHOULDER,
-    Orthopedic: MOCK_SUMMARY_ORTHOPEDIC,
-    Scar: MOCK_SUMMARY_SCAR,
-    SOAP: MOCK_SUMMARY_SOAP,
+    shoulder: MOCK_SUMMARY_SHOULDER,
+    orthopedic: MOCK_SUMMARY_ORTHOPEDIC,
+    'plastic-surgery': MOCK_SUMMARY_PLASTIC_SURGERY,
+    soap: MOCK_SUMMARY_SOAP,
+    'new-consultation': MOCK_SUMMARY_NEW_CONSULTATION,
+    'follow-up': MOCK_SUMMARY_FOLLOW_UP,
+    scar: MOCK_SUMMARY_SCAR,
   }
-  return map[examType] ?? MOCK_SUMMARY_SHOULDER
+  return map[templateId] ?? MOCK_SUMMARY_ORTHOPEDIC
 }

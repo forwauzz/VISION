@@ -5,17 +5,17 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import GoldenVLoading from '../components/GoldenVLoading.jsx'
-import { getMockSummaryForTemplate } from '../lib/demoMockData.js'
 import {
   MOCK_TRANSCRIPT,
   MOCK_FRAMES,
   MOCK_VIDEO_PLACEHOLDER,
   VISIT_TYPE_CARDS,
+  TEMPLATE_OPTIONS,
+  getMockSummaryForTemplate,
 } from '../lib/demoMockData.js'
 import { DEVICE_CARDS } from '../lib/deviceOptions.js'
 
 const PROCESS_STEPS = ['Transcribing…', 'Analyzing…', 'Masking…']
-const TEMPLATE_OPTIONS = ['Shoulder', 'Orthopedic', 'Scar', 'SOAP']
 
 function formatSegmentTime(seconds) {
   const m = Math.floor(seconds / 60)
@@ -356,20 +356,21 @@ export default function Demo() {
         {step === 8 && (
           <section className="space-y-8">
             <h1 className="text-3xl font-bold dark:text-white">Select template</h1>
-            <div className="flex flex-wrap gap-4">
-              {TEMPLATE_OPTIONS.map((v) => (
-                <button
-                  key={v}
-                  type="button"
-                  onClick={() => setSelectedTemplate(v)}
-                  className={`px-8 py-4 rounded-xl border font-semibold transition-all ${
-                    selectedTemplate === v ? 'border-primary bg-primary/20 text-primary' : 'border-white/10'
-                  }`}
-                >
-                  {v}
-                </button>
-              ))}
-            </div>
+            <p className="text-slate-400">Choose an Orthopedic, Plastic Surgery, or clinical documentation template for your report.</p>
+            <label className="block">
+              <span className="text-sm font-bold text-slate-400 uppercase tracking-widest block mb-2">Template</span>
+              <select
+                value={selectedTemplate}
+                onChange={(e) => setSelectedTemplate(e.target.value)}
+                className="w-full max-w-md px-4 py-3 rounded-lg bg-surface-dark border border-white/10 text-white focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/30"
+                aria-label="Select report template"
+              >
+                <option value="">Select a template…</option>
+                {TEMPLATE_OPTIONS.map((opt) => (
+                  <option key={opt.id} value={opt.id}>{opt.label}</option>
+                ))}
+              </select>
+            </label>
             <div className="flex gap-4">
               <button type="button" onClick={() => setStep(7)} className="px-6 py-2 rounded-lg border border-white/20">
                 Back
@@ -389,11 +390,11 @@ export default function Demo() {
         {step === 9 && (
           <section className="space-y-8">
             <h1 className="text-3xl font-bold dark:text-white">Report summary</h1>
-            <div className="rounded-xl border border-primary/20 bg-surface-dark p-8 space-y-6">
+            <div className="rounded-xl border border-primary/20 bg-surface-dark p-8 space-y-8 max-w-4xl">
               {Object.keys(summary).map((heading) => (
-                <div key={heading}>
-                  <h2 className="text-lg font-bold text-primary uppercase tracking-wider mb-2">{heading}</h2>
-                  <p className="text-slate-300 leading-relaxed">{summary[heading]}</p>
+                <div key={heading} className="border-b border-white/5 pb-6 last:border-b-0 last:pb-0">
+                  <h2 className="text-lg font-bold text-primary uppercase tracking-wider mb-3">{heading}</h2>
+                  <p className="text-slate-300 leading-relaxed text-sm md:text-base">{summary[heading]}</p>
                 </div>
               ))}
             </div>
