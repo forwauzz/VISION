@@ -6,14 +6,14 @@
 
 const IMG = (id, w, h) => `https://images.unsplash.com/photo-${id}?w=${w}&h=${h}&fit=crop`
 
-/** Video capture preview — clinical exam room */
-export const MOCK_VIDEO_PLACEHOLDER = IMG('1551076805-e1869033e561', 640, 360)
+/** Video capture preview — orthopedic exam / doctor-patient context */
+export const MOCK_VIDEO_PLACEHOLDER = IMG('1579684385127-1ef15d508118', 640, 360)
 
-/** Frame mock images — varied clinical/surgical imagery */
+/** Frame mock images — orthopedic doctor-patient exam, not surgery room */
 const FRAME_IMAGES = [
-  IMG('1559839734-2b71ea197ec2', 320, 180),
-  IMG('1631217868264-e5b90bb7e133', 320, 180),
-  IMG('1581595220892-b0739db3ba8', 320, 180),
+  IMG('1607619056574-b059194b8c1e', 320, 180),
+  IMG('1612349317158-e41353167632', 320, 180),
+  IMG('1576092764391-7b43d4d2c944', 320, 180),
 ]
 
 export const MOCK_TRANSCRIPT = [
