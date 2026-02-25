@@ -1,6 +1,6 @@
 /**
  * Vision Landing Page — derived from stitch-extracted/stitch/vision_landing_page/code.html
- * Structure and classes match Stitch UI; "Request Access" will route to login when wired.
+ * Structure and classes match Stitch UI; "Login" will route to login when wired.
  */
 import { Link } from 'react-router-dom'
 
@@ -21,7 +21,7 @@ export default function Landing() {
             <a className="text-sm font-medium tracking-wide hover:text-primary transition-colors" href="#standards">Clinical Standards</a>
             <a className="text-sm font-medium tracking-wide hover:text-primary transition-colors" href="#security">Security</a>
             <Link to="/login" className="bg-primary text-background-dark px-6 py-2.5 rounded-lg text-sm font-bold tracking-wide hover:bg-primary/90 transition-all active:scale-95">
-              Request Access
+              Login
             </Link>
           </div>
           <button type="button" className="md:hidden text-primary" aria-label="Menu">
@@ -45,7 +45,7 @@ export default function Landing() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link to="/login" className="w-full sm:w-auto min-w-[200px] bg-primary text-background-dark px-8 py-4 rounded-lg text-base font-bold tracking-wide hover:shadow-[0_0_30px_rgba(198,166,93,0.3)] transition-all text-center">
-              Request Access
+              Login
             </Link>
             <button type="button" className="w-full sm:w-auto px-8 py-4 rounded-lg text-base font-semibold tracking-wide border border-slate-700 hover:border-primary transition-all">
               Watch Showcase
@@ -184,7 +184,7 @@ export default function Landing() {
                 Access is currently restricted to select surgical departments and private practices. Apply for our early access program.
               </p>
               <Link to="/login" className="inline-block bg-primary text-background-dark px-10 py-4 rounded-lg text-lg font-bold tracking-wide hover:shadow-[0_0_30px_rgba(198,166,93,0.4)] transition-all">
-                Request Access
+                Login
               </Link>
             </div>
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-[80px] rounded-full" aria-hidden />
