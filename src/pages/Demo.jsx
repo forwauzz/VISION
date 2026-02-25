@@ -11,9 +11,7 @@ import {
   MOCK_FRAMES,
   MOCK_VIDEO_PLACEHOLDER,
 } from '../lib/demoMockData.js'
-import { DEVICE_OPTIONS } from '../lib/deviceOptions.js'
-
-const DEMO_DEVICES = DEVICE_OPTIONS
+import { DEVICE_CARDS } from '../lib/deviceOptions.js'
 
 const VISIT_TYPES = ['Shoulder', 'Orthopedic', 'Scar', 'SOAP']
 const PROCESS_STEPS = ['Transcribing…', 'Analyzing…', 'Masking…']
@@ -79,23 +77,69 @@ export default function Demo() {
           <section className="space-y-8">
             <h1 className="text-3xl font-bold dark:text-white">Select device</h1>
             <p className="text-slate-400">Choose your capture hardware for this session.</p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {DEMO_DEVICES.map((d) => (
-                <button
-                  key={d.id}
-                  type="button"
-                  onClick={() => setSelectedDevice(d.id)}
-                  className={`p-6 rounded-xl border text-left transition-all ${
-                    selectedDevice === d.id
-                      ? 'border-primary bg-primary/10 gold-glow'
-                      : 'border-white/10 hover:border-primary/50 bg-surface-dark'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-2xl text-primary mb-2">videocam</span>
-                  <h3 className="font-bold dark:text-white">{d.label}</h3>
-                  <p className="text-xs text-slate-400">{d.description}</p>
-                </button>
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {DEVICE_CARDS.map((card) => {
+                const isOffline = card.status === 'offline'
+                const isPairing = card.status === 'pairing'
+                const isSelected = selectedDevice === card.id
+                const batteryColor = isOffline ? 'text-slate-600' : card.batteryDisplay === '42%' ? 'text-orange-400' : 'text-slate-400'
+                return (
+                  <button
+                    key={card.id}
+                    type="button"
+                    onClick={() => !isOffline && setSelectedDevice(card.id)}
+                    disabled={isOffline}
+                    className={`rounded-xl overflow-hidden text-left transition-all border ${
+                      isSelected ? 'border-primary ring-2 ring-primary/40 gold-glow' : 'border-white/10 hover:border-primary/40'
+                    } ${isOffline ? 'opacity-90 cursor-not-allowed' : 'cursor-pointer'} bg-surface-dark/60 backdrop-blur-sm`}
+                  >
+                    <div className={`aspect-video relative overflow-hidden bg-neutral-dark/50 ${isOffline ? 'grayscale opacity-50' : ''}`}>
+                      <img src={card.imageUrl} alt="" className={`w-full h-full object-cover ${isOffline ? '' : isPairing ? 'opacity-80 blur-[2px]' : 'opacity-80'}`} />
+                      {card.status === 'online' && (
+                        <div className="absolute top-4 right-4 bg-green-500/20 text-green-400 text-xs font-bold px-2 py-1 rounded border border-green-500/30 backdrop-blur-md">ONLINE</div>
+                      )}
+                      {card.status === 'offline' && (
+                        <div className="absolute top-4 right-4 bg-slate-900/60 text-slate-300 text-xs font-bold px-2 py-1 rounded border border-white/10 backdrop-blur-md">OFFLINE</div>
+                      )}
+                      {isPairing && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-background-dark/40 backdrop-blur-[2px]">
+                          <div className="flex flex-col items-center">
+                            <span className="material-symbols-outlined text-primary text-4xl animate-pulse mb-2">bluetooth_searching</span>
+                            <span className="text-primary text-xs font-bold tracking-widest uppercase">Pairing...</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className={`text-xl font-bold ${isOffline ? 'text-slate-500 italic' : 'text-white'}`}>{card.label}</h3>
+                          <p className={`text-sm ${isOffline ? 'text-slate-600' : 'text-slate-400'}`}>{card.description}</p>
+                        </div>
+                        <div className={`text-right ${batteryColor}`}>
+                          <span className="material-symbols-outlined mb-1 block">{card.batteryIcon}</span>
+                          <p className="text-sm font-bold">{card.batteryDisplay}</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className={`flex-1 py-2.5 rounded-lg font-bold text-sm text-center ${isOffline ? 'bg-slate-800 text-slate-500 border border-slate-700' : 'bg-primary/10 text-primary border border-primary/20'}`}>
+                          {isOffline ? 'Offline' : 'Select'}
+                        </span>
+                        <span className={`px-3 py-2.5 border rounded-lg ${isOffline ? 'border-slate-800 text-slate-600' : 'border-slate-700 text-slate-400'}`}>
+                          <span className="material-symbols-outlined text-sm">more_vert</span>
+                        </span>
+                      </div>
+                    </div>
+                  </button>
+                )
+              })}
+              <div className="border-2 border-dashed border-primary/20 rounded-xl flex flex-col items-center justify-center p-8 bg-primary/5 opacity-60 cursor-not-allowed" aria-hidden>
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-4">
+                  <span className="material-symbols-outlined text-3xl">add</span>
+                </div>
+                <h3 className="text-xl font-bold text-white mb-1">Add New Device</h3>
+                <p className="text-slate-400 text-sm text-center">Register new clinical hardware to your Vision network</p>
+              </div>
             </div>
             <button
               type="button"
