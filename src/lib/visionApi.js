@@ -82,10 +82,10 @@ export async function summarizeSession(payload) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }))
     const msg = res.status === 503
-      ? 'Summarization not configured. Add OPENAI_API_KEY to .env and restart server.'
+      ? 'Summarization not configured. Set OPENAI_API_KEY in Netlify env (or .env locally) and redeploy.'
       : res.status === 404
         ? 'Backend not running. Start it with: npm run server'
-        : (err.error || 'Summarization failed')
+        : [err.error, err.details].filter(Boolean).join(': ') || 'Summarization failed'
     throw new Error(msg)
   }
   const { structured_exam } = await res.json()

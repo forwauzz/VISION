@@ -38,7 +38,7 @@ export async function transcribeAudioChunk(audioBlob, timeOffsetSeconds = 0) {
       message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'
     } else if (res.status === 502 || res.status === 500) {
       if (err.code === 'NO_API_KEY') message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'
-      else message = err.details ? `${err.error || 'Transcription failed'}: ${String(err.details).slice(0, 120)}` : 'Transcription server error. Ensure npm run server is running and OPENAI_API_KEY is set in .env'
+      else message = err.details ? `${err.error || 'Transcription failed'}: ${String(err.details).slice(0, 120)}` : 'Transcription server error. Set OPENAI_API_KEY in Netlify env (or .env locally and run: npm run server).'
     } else if (res.status === 400 && err.details) {
       message += ` (${String(err.details).slice(0, 80)})`
     }
@@ -87,7 +87,7 @@ export async function transcribeVideo(videoBlob) {
       message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'
     } else if (res.status === 502 || res.status === 500) {
       if (err.code === 'NO_API_KEY') message = 'Transcription not configured. OPENAI_API_KEY must be set in .env. Run: npm run server'
-      else message = err.details ? `${err.error || 'Transcription failed'}: ${String(err.details).slice(0, 120)}` : 'Transcription server error. Ensure npm run server is running and OPENAI_API_KEY is set in .env'
+      else message = err.details ? `${err.error || 'Transcription failed'}: ${String(err.details).slice(0, 120)}` : 'Transcription server error. Set OPENAI_API_KEY in Netlify env (or .env locally and run: npm run server).'
     } else if (res.status === 400 && err.details) {
       message += ` (${String(err.details).slice(0, 80)})`
     }

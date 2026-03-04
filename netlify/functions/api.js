@@ -209,21 +209,33 @@ export async function handleSummarizeSession(event) {
         ],
       }),
     })
+    const resText = await oaiRes.text()
     if (!oaiRes.ok) {
-      const errText = await oaiRes.text()
-      return jsonResponse(oaiRes.status, { error: 'Summarization failed', details: errText }, origin)
+      return jsonResponse(oaiRes.status >= 500 ? 502 : oaiRes.status, { error: 'Summarization failed', details: resText.slice(0, 400), code: 'OPENAI_ERROR' }, origin)
     }
-    const data = await oaiRes.json()
+    let data
+    try {
+      data = JSON.parse(resText)
+    } catch {
+      return jsonResponse(502, { error: 'Summarization failed', details: 'Invalid response from OpenAI', code: 'INVALID_RESPONSE' }, origin)
+    }
     const content = data?.choices?.[0]?.message?.content?.trim() || '{}'
     const jsonMatch = content.match(/\{[\s\S]*\}/)
-    const structured_exam = jsonMatch ? JSON.parse(jsonMatch[0]) : {}
+    let structured_exam = {}
+    if (jsonMatch) {
+      try {
+        structured_exam = JSON.parse(jsonMatch[0])
+      } catch {
+        structured_exam = {}
+      }
+    }
     const normalized = {}
     for (const h of headings) {
       normalized[h] = typeof structured_exam[h] === 'string' ? structured_exam[h].slice(0, 2000) : ''
     }
     return jsonResponse(200, { structured_exam: normalized }, origin)
   } catch (e) {
-    return jsonResponse(500, { error: 'Summarization error', details: e.message }, origin)
+    return jsonResponse(500, { error: 'Summarization error', details: e.message || String(e), code: 'SUMMARIZE_ERROR' }, origin)
   }
 }
 

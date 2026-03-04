@@ -155,7 +155,7 @@ export default function Demo() {
 
         {step === 2 && (
           <section className="space-y-8">
-            <h1 className="text-3xl font-bold dark:text-white">Select visit type</h1>
+            <h1 className="text-3xl font-bold dark:text-white font-serif">Select Visit Type</h1>
             <p className="text-slate-400 max-w-2xl">
               Choose the specialized clinical path for the patient&apos;s upcoming session. This will tailor the diagnostic tools and clinical workflow accordingly.
             </p>

@@ -1,0 +1,10 @@
+{
+  "examType": "SOAP",
+  "headings": ["Subjective", "Objective", "Assessment", "Plan"],
+  "placeholders": {
+    "Subjective": "Patient-reported history, chief complaint, symptoms.",
+    "Objective": "Observed findings: exam, vitals, visible signs from transcript and frames.",
+    "Assessment": "Clinical impression based on subjective and objective data. No diagnosis if not documented.",
+    "Plan": "Recommended next steps, follow-up, or treatment plan."
+  }
+}

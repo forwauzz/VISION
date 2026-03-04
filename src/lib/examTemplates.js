@@ -4,17 +4,19 @@
 import shoulderTemplate from '../../templates/shoulder.json'
 import scarTemplate from '../../templates/scar.json'
 import orthopedicTemplate from '../../templates/orthopedic.json'
+import soapTemplate from '../../templates/soap.json'
 
 const TEMPLATES = {
   Shoulder: shoulderTemplate,
   Scar: scarTemplate,
   Orthopedic: orthopedicTemplate,
+  SOAP: soapTemplate,
 }
 
 const DEFAULT_HEADINGS = ['Inspection', 'Active Range of Motion', 'Swelling', 'Scarring']
 
 /**
- * @param {'Shoulder' | 'Scar' | 'Orthopedic'} examType
+ * @param {'Shoulder' | 'Scar' | 'Orthopedic' | 'SOAP'} examType
  * @returns {import('./sessionStorageSchema.js').StructuredExam} Empty structured_exam with template headings (and optional placeholder hints in values).
  */
 export function getTemplateForExamType(examType) {
@@ -30,7 +32,7 @@ export function getEmptyStructuredExam() {
 /**
  * Returns an empty structured_exam for the given exam type — headings present, all values blank.
  * Use this to initialize the report UI before any content is generated.
- * @param {'Shoulder' | 'Scar' | 'Orthopedic'} examType
+ * @param {'Shoulder' | 'Scar' | 'Orthopedic' | 'SOAP'} examType
  * @returns {import('./sessionStorageSchema.js').StructuredExam}
  */
 export function getEmptyExamForType(examType) {

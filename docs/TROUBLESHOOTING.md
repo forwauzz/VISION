@@ -12,6 +12,16 @@
 
 ---
 
+## Upload video
+
+**Flow:** Dashboard → Upload video → choose exam type, output format (Structured exam or SOAP note), select file → transcribe → extract frames → describe frames → build report → Transcript Review.
+
+**Limits:** The upload page enforces a **5 MB** file size and **5 minute** max duration so the file stays under Netlify’s 6 MB request limit when sent to `/api/transcribe`. If you see "File is too large" or "Video is too long", use a shorter or lower-resolution video.
+
+**Processing failed / Transcription server error:** Same as live sessions: ensure `OPENAI_API_KEY` is set (Netlify env or local `.env`) and the transcription API is reachable. The error message shown on the upload page is the same as from the API.
+
+---
+
 ## Audio capture and transcription
 
 **Flow:** Microphone → MediaRecorder (10s chunks) → `transcribeAudioChunk()` → POST `/api/transcribe` (proxy to backend) → Deepgram API → segments shown in Live Transcript.
